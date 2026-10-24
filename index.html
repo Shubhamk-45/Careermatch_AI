@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CareerMatch AI</title>
+<style>
+:root{--bgc:#f3efff;--bg:var(--bgc);--panel:#fff;--text:#14193a;--muted:#5d6385;--line:#e3e6f3;--navy:#0b1437;--purple:#7c3aed;--soft:#ede9fe;--err:#b42318;--ok:#067647;
+ box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0a1030;--panel:#131b45;--text:#eef0ff;--muted:#a9afd6;--line:#252e63;--soft:#2a2166;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0a1030;--panel:#131b45;--text:#eef0ff;--muted:#a9afd6;--line:#252e63;--soft:#2a2166;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.5}
+:focus-visible{outline:3px solid var(--purple);outline-offset:2px}
+.top{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--navy);color:#fff;position:sticky;top:0;z-index:20}
+.top button{background:none;border:1px solid #2b3877;color:#fff;border-radius:8px;font-size:1.3rem;padding:2px 11px;cursor:pointer}
+.brand{font-weight:800}.brand span{color:#b79cff}
+.side{position:fixed;inset:0 auto 0 0;width:250px;background:var(--panel);border-right:1px solid var(--line);padding:70px 14px 18px;transform:translateX(-100%);transition:transform .2s;z-index:15;overflow-y:auto}
+.side.open{transform:none}
+.user{display:flex;gap:10px;align-items:center;padding-bottom:14px;border-bottom:1px solid var(--line);margin-bottom:10px}
+.avatar{width:38px;height:38px;border-radius:50%;background:var(--purple);color:#fff;display:grid;place-items:center;font-weight:700}
+.user small{color:var(--muted);display:block}
+.side a{display:block;padding:11px 12px;border-radius:8px;color:var(--text);text-decoration:none;font-weight:600;font-size:.95rem;cursor:pointer}
+.side a.on{background:var(--soft);color:var(--purple)}
+.side h4{margin:16px 12px 4px;font-size:.75rem;letter-spacing:.06em;color:var(--muted)}
+.theme{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;font-weight:600;font-size:.95rem}
+main{padding:20px 16px 40px;max-width:1000px;margin:0 auto}
+.view{display:none}.view.on{display:block}
+h1{margin:0;font-size:1.5rem}h2{margin:0 0 4px;font-size:1.4rem}h3{margin:0 0 8px}
+.sub{color:var(--muted);margin:2px 0 14px}
+.demo{display:inline-block;background:var(--soft);color:var(--purple);font-weight:700;font-size:.82rem;padding:6px 10px;border-radius:6px;margin-bottom:14px}
+.tiles{display:grid;grid-template-columns:1fr;gap:12px}
+.tile{border:0;text-align:left;color:#fff;border-radius:14px;padding:18px;cursor:pointer;font:inherit;min-height:110px}
+.tile b{display:block;font-size:1.05rem;margin-bottom:4px}.tile span{font-size:.88rem;opacity:.95}
+.t1{background:linear-gradient(135deg,#8b5cf6,#6d28d9)}.t2{background:linear-gradient(135deg,#ec4899,#be185d)}
+.t3{background:linear-gradient(135deg,#d97706,#b45309)}.t4{background:linear-gradient(135deg,#0e9fb5,#0b6f83)}
+.t5{background:linear-gradient(135deg,#e5584b,#b93a2f)}.t6{background:linear-gradient(135deg,#6d28d9,#3b1a8f)}
+.grid2{display:grid;grid-template-columns:1fr;gap:14px;margin-top:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;margin-top:14px}
+.grid2 .card{margin-top:0}
+.card h2{font-size:1.1rem}
+.mini{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mini div{background:var(--bg);border-radius:10px;padding:12px}.mini b{font-size:1.4rem;display:block}.mini span{color:var(--muted);font-size:.85rem}
+.bar{background:var(--line);height:9px;border-radius:6px;margin-top:6px;overflow:hidden}.bar i{display:block;height:100%;background:var(--purple)}
+label{display:block;font-weight:700;margin:12px 0 5px;font-size:.9rem}
+input,textarea,select{width:100%;font:inherit;padding:11px;border:1.5px solid var(--line);border-radius:10px;background:var(--bg);color:var(--text)}
+input[type=checkbox]{width:auto}.chk{display:inline-flex;align-items:center;gap:6px;margin:4px 12px 4px 0;font-weight:500}
+.btn{margin-top:12px;width:100%;min-height:48px;border:2px solid var(--purple);border-radius:10px;background:var(--purple);color:#fff;font:inherit;font-weight:700;cursor:pointer}
+.btn.o{background:transparent;color:var(--purple)}.btn[disabled]{opacity:.6}
+.err{color:var(--err);font-weight:600;min-height:1.2em;margin:8px 0 0}.ok{color:var(--ok);font-weight:600;margin:8px 0}
+.note{border-left:4px solid #b79cff;background:var(--soft);padding:10px 14px;border-radius:6px;font-size:.9rem;margin:12px 0}
+.score{font-size:1.6rem;font-weight:800;color:var(--purple)}
+.chip{display:inline-block;border:1px solid var(--line);border-radius:20px;padding:3px 10px;margin:3px 3px 0 0;font-size:.85rem}
+.chip.m{border-color:var(--err);color:var(--err)}.chip.h{border-color:var(--ok);color:var(--ok)}
+ul{padding-left:20px;margin:6px 0}
+.toast{position:fixed;left:16px;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));background:var(--navy);color:#fff;padding:14px;border-radius:10px;z-index:30;display:none}
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:12;display:none}.scrim.show{display:block}
+@media(min-width:800px){.top button{display:none}.side{transform:none}main{margin-left:270px;max-width:none;padding-right:28px}.tiles{grid-template-columns:repeat(3,1fr)}.grid2,.g3{grid-template-columns:1fr 1fr}.g3{display:grid;gap:12px}.scrim{display:none!important}}
+.top select{margin-left:auto;width:auto;padding:6px 8px;background:#16225a;color:#fff;border:1px solid #2b3877;border-radius:8px}
+.back{display:inline-flex;align-items:center;gap:6px;background:var(--panel);color:var(--purple);border:1.5px solid var(--purple);border-radius:10px;padding:8px 14px;font:inherit;font-weight:700;cursor:pointer;margin-bottom:14px}
+.avatar,.ph{overflow:hidden}.avatar img,.ph img{width:100%;height:100%;object-fit:cover}
+.ph{width:84px;height:84px;border-radius:50%;background:var(--purple);color:#fff;display:grid;place-items:center;font-size:2rem;font-weight:700;flex:none}
+.phrow{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.sm{width:auto;display:inline-block;padding:0 16px;line-height:44px;min-height:46px;margin:8px 8px 0 0;text-align:center}
+.fh{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden}
+.ir{display:flex;flex-direction:column;padding:10px 0;border-bottom:1px solid var(--line)}.ir b{font-size:.82rem;color:var(--muted)}
+.swb{width:26px;height:26px;border-radius:50%;border:2px solid var(--purple);margin-left:6px;cursor:pointer;vertical-align:middle}
+.tile.off{opacity:.65}
+</style>
+</head>
+<body>
+<div class="top"><button id="menu" aria-label="Open menu" aria-expanded="false">&#9776;</button><span class="brand">CareerMatch <span>AI</span></span><select id="lang" aria-label="Language"><option value="en">English</option><option value="hi">हिन्दी</option><option value="mr">मराठी</option></select></div>
+<div class="scrim" id="scrim"></div>
+<aside class="side" id="side">
+  <div class="user"><div class="avatar" id="av">S</div><div><b id="uname">Student</b><small>Saved in this browser</small></div></div>
+  <a data-go="dash" class="on">Dashboard</a>
+  <a data-go="profile">My Profile</a>
+  <a data-go="matches">Career Matches</a>
+  <a data-go="resume">Resume Analyzer</a>
+  <a data-go="jobs">Jobs &amp; Internships</a>
+  <a data-go="gap">Skill Gap &amp; Roadmap</a>
+  <a data-go="explore">Career Explorer</a>
+  <h4>ACCOUNT</h4>
+  <a data-go="about">About &amp; Contact</a>
+  <a data-go="login">Login / Sign Up</a>
+  <h4>APPEARANCE</h4>
+  <div class="theme">Dark mode <input type="checkbox" id="dark" aria-label="Dark mode"></div>
+  <div class="theme">Background<span id="sw"></span></div>
+</aside>
+<main>
+
+<section class="view on" id="v-dash">
+  <h1>Welcome to CareerMatch AI</h1>
+  <p class="sub">Your student career companion</p>
+  <p class="demo">PROTOTYPE: results use simple rules on your input. No AI model is connected yet.</p>
+  <div class="tiles">
+    <button class="tile t1" data-go="resume"><b>Resume Analyzer</b><span>Find skills in your resume text</span></button>
+    <button class="tile t2" data-go="profile"><b>Student Profile</b><span>Your information and photo</span></button>
+    <button class="tile t3" data-go="matches"><b>Career Matches</b><span>See careers that fit your profile</span></button>
+    <button class="tile t4" data-go="gap"><b>Skill Gap &amp; Roadmap</b><span>Compare skills and track steps</span></button>
+    <button class="tile t5" data-go="jobs"><b>Jobs &amp; Internships</b><span>Sample listings with skill match</span></button>
+    <button class="tile t6 off" aria-disabled="true" data-go="premium"><b>Premium</b><span>Coming soon</span></button>
+  </div>
+  <div class="grid2" style="margin-top:16px">
+    <section class="card">
+      <h2>Your Progress</h2>
+      <div class="mini"><div><b id="s1">0</b><span>Resumes checked</span></div><div><b id="s2">0</b><span>Job analyses</span></div><div><b id="s3">0</b><span>Roadmap steps done</span></div><div><b id="s4">0%</b><span>Profile complete</span></div></div>
+      <p class="sub" style="margin-top:14px">Profile completion</p><div class="bar"><i id="pbar" style="width:0%"></i></div>
+    </section>
+    <section class="card">
+      <h2>Job Analyzer</h2>
+      <form id="jf" novalidate>
+        <label for="jt">Job title</label><input id="jt" placeholder="e.g., Front-end Developer" maxlength="100">
+        <label for="jd">Job description</label><textarea id="jd" rows="5" maxlength="5000" placeholder="Paste the job description here (at least 50 characters)"></textarea>
+        <p class="err" id="je" role="alert"></p>
+        <button class="btn" id="jb" type="submit">Analyze Job Description</button>
+      </form>
+      <div id="jr"></div>
+    </section>
+  </div>
+</section>
+
+<section class="view" id="v-profile">
+  <h2>My Profile</h2><p class="sub">Saved only in this browser on this device.</p>
+  <div class="card phrow"><div class="ph" id="phbig">?</div><div>
+    <b>Profile photo</b><br>
+    <input id="pph" class="fh" type="file" accept="image/jpeg,image/png,image/webp">
+    <label for="pph" class="btn sm">Choose photo</label><button type="button" class="btn o sm" id="phrm">Remove photo</button>
+    <p class="sub" style="margin:8px 0 0">Photo stays on this device only.</p><p class="err" id="pherr" role="alert"></p></div></div>
+  <div class="card"><h3>My Information</h3><div id="pinfo"></div></div>
+  <h3 style="margin:20px 0 0">Edit information</h3>
+  <form id="pf" class="card" novalidate>
+    <label for="pn">Name</label><input id="pn" maxlength="80"><label for="pm">Email</label><input id="pm" type="email" maxlength="120"><label for="pt">Phone</label><input id="pt" type="tel" maxlength="20"><label for="pc">City</label><input id="pc" maxlength="80"><label for="pu">College / university</label><input id="pu" maxlength="120">
+    <label for="pe">Education</label><select id="pe"><option value="">Choose</option><option value="High school">High school</option><option value="Diploma">Diploma</option><option value="Bachelor’s">Bachelor’s</option><option value="Master’s">Master’s</option></select>
+    <label for="pb">Branch / major</label><input id="pb" maxlength="80">
+    <label for="py">Year</label><select id="py"><option value="">Choose</option><option value="1st">1st</option><option value="2nd">2nd</option><option value="3rd">3rd</option><option value="4th">4th</option><option value="Graduated">Graduated</option></select>
+    <label>Interests</label><div id="pi"></div>
+    <label for="ps">Skills (comma separated)</label><input id="ps" placeholder="e.g. html, css, python, communication">
+    <label for="px">Experience and qualifications</label><textarea id="px" rows="3" maxlength="1000"></textarea>
+    <p class="err" id="perr" role="alert"></p><p class="ok" id="pok" role="status"></p>
+    <button class="btn" type="submit">Save Profile</button>
+  </form>
+</section>
+
+<section class="view" id="v-matches"><h2>Career Matches</h2><div id="recs"></div></section>
+
+<section class="view" id="v-resume">
+  <h2>Resume Analyzer</h2><p class="sub">Choose a PDF and paste its text. This step finds known skill words. It is not AI.</p>
+  <form id="rf" class="card" novalidate>
+    <label for="rfile">Resume PDF (max 5 MB)</label><input id="rfile" type="file" accept="application/pdf,.pdf">
+    <p class="sub" style="margin:6px 0 0">The PDF stays on your phone. Automatic PDF text reading is added in a later step.</p>
+    <label for="rtext">Resume text</label><textarea id="rtext" rows="8" maxlength="12000" placeholder="Copy the text of your resume and paste it here"></textarea>
+    <label for="rtarget">Target career</label><select id="rtarget"></select>
+    <p class="err" id="rerr" role="alert"></p>
+    <button class="btn" id="rbtn" type="submit">Check Resume</button>
+  </form>
+  <div id="rres"></div>
+</section>
+
+<section class="view" id="v-jobs">
+  <h2>Jobs &amp; Internships</h2><p class="demo">SAMPLE LISTINGS: not real openings</p>
+  <div class="card g3">
+    <div><label for="fl">Location</label><select id="fl"><option value="">All</option><option value="Remote">Remote</option><option value="On-site">On-site</option><option value="Hybrid">Hybrid</option></select></div>
+    <div><label for="fr">Role type</label><select id="fr"><option value="">All</option><option value="Job">Job</option><option value="Internship">Internship</option></select></div>
+    <div><label for="fx">Experience</label><select id="fx"><option value="">All</option><option value="Fresher">Fresher</option><option value="0-2 years">0-2 years</option></select></div>
+  </div>
+  <div id="jlist"></div>
+</section>
+
+<section class="view" id="v-gap">
+  <h2>Skill Gap &amp; Roadmap</h2><p class="sub">Pick a target career to compare it with your profile skills.</p>
+  <div class="card"><label for="gt">Target career</label><select id="gt"></select></div>
+  <div id="gres"></div>
+</section>
+
+<section class="view" id="v-explore"><h2>Career Explorer</h2><p class="sub">Sample career summaries with common skills.</p><div class="g3" id="clist"></div></section>
+
+<section class="view" id="v-about">
+  <h2>About &amp; Contact</h2>
+  <p>CareerMatch AI is a student project for exploring careers and skills. It is a prototype and gives general guidance only.</p>
+  <form id="cf" class="card" novalidate>
+    <label for="cn">Name</label><input id="cn" maxlength="80">
+    <label for="ce">Email</label><input id="ce" type="email">
+    <label for="cm">Message</label><textarea id="cm" rows="4" maxlength="1000"></textarea>
+    <p class="err" id="cerr" role="alert"></p><p class="ok" id="cok" role="status"></p>
+    <button class="btn" type="submit">Send</button>
+  </form>
+</section>
+
+<section class="view" id="v-login">
+  <h2>Login / Sign Up</h2><p class="sub">Real accounts are added in Phase 2. This form only checks your input.</p>
+  <form id="lf" class="card" novalidate>
+    <label for="le">Email</label><input id="le" type="email" autocomplete="email">
+    <label for="lp">Password (8+ characters)</label><input id="lp" type="password" autocomplete="current-password">
+    <p class="err" id="lerr" role="alert"></p><p class="ok" id="lok" role="status"></p>
+    <button class="btn" type="submit">Log In</button>
+    <button class="btn o" type="submit">Sign Up</button>
+  </form>
+</section>
+
+</main>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+"use strict";
+var $=function(i){return document.getElementById(i)};
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+function wait(ms){return new Promise(function(r){setTimeout(r,ms)})}
+function busy(b,on,t){b.disabled=on;b.innerHTML=on?"Working...":t}
+var mem={};
+var store={get:function(k){try{var v=localStorage.getItem(k);if(v!==null)return JSON.parse(v)}catch(e){}return mem[k]===undefined?null:mem[k]},
+ set:function(k,v){mem[k]=v;try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+
+var FIELDS=["Technology","Data","Design","Business","Security","Marketing"];
+var CAREERS=[
+{id:"web",n:"Web Developer",f:"Technology",tech:["html","css","javascript","git","react","sql"],soft:["problem solving","communication","teamwork"],steps:["Learn HTML and CSS","Learn JavaScript basics","Build three small projects","Learn Git and GitHub","Learn a framework and a database"],proj:"A personal portfolio site and a small app that saves data"},
+{id:"data",n:"Data Analyst",f:"Data",tech:["excel","sql","python","statistics","tableau"],soft:["critical thinking","communication","attention to detail"],steps:["Learn spreadsheets","Learn SQL","Learn Python for data","Practice on public datasets","Publish a report portfolio"],proj:"An analysis of a public dataset with charts and conclusions"},
+{id:"ux",n:"UX Designer",f:"Design",tech:["figma","wireframing","prototyping","user research"],soft:["empathy","communication","creativity"],steps:["Learn design basics","Learn user research","Practice wireframing","Make two case studies","Build a portfolio"],proj:"Redesign a screen of an app you use and explain your choices"},
+{id:"sec",n:"Cybersecurity Analyst",f:"Security",tech:["networking","linux","python","security basics"],soft:["curiosity","attention to detail","ethics"],steps:["Learn networking basics","Learn Linux","Learn security fundamentals","Practice in legal training labs","Build a write-up portfolio"],proj:"Write-ups of beginner exercises done in legal practice labs"},
+{id:"ml",n:"Machine Learning Engineer",f:"Technology",tech:["python","math","machine learning","pandas","git"],soft:["problem solving","persistence","communication"],steps:["Learn Python","Learn maths for ML","Learn core ML methods","Build projects with real data","Learn to deploy a model"],proj:"A small model trained on a public dataset with a clear write-up"},
+{id:"mkt",n:"Digital Marketer",f:"Marketing",tech:["seo","content writing","analytics","social media"],soft:["creativity","communication","adaptability"],steps:["Learn marketing basics","Learn SEO","Practice content writing","Learn analytics tools","Run a small campaign"],proj:"Grow a small page or blog and report what worked"}];
+var JOBS=[
+{t:"Junior Web Developer",ty:"Job",l:"Hybrid",x:"0-2 years",s:["html","css","javascript","git"]},
+{t:"Web Development Intern",ty:"Internship",l:"Remote",x:"Fresher",s:["html","css","javascript"]},
+{t:"Data Analyst Intern",ty:"Internship",l:"Remote",x:"Fresher",s:["excel","sql","python"]},
+{t:"Junior Data Analyst",ty:"Job",l:"On-site",x:"0-2 years",s:["sql","excel","tableau","statistics"]},
+{t:"UX Design Intern",ty:"Internship",l:"Hybrid",x:"Fresher",s:["figma","wireframing","user research"]},
+{t:"Security Analyst Trainee",ty:"Job",l:"On-site",x:"Fresher",s:["networking","linux","security basics"]},
+{t:"ML Intern",ty:"Internship",l:"Remote",x:"Fresher",s:["python","machine learning","pandas"]},
+{t:"Marketing Associate",ty:"Job",l:"Hybrid",x:"0-2 years",s:["seo","analytics","content writing","social media"]}];
+var VOCAB=[];CAREERS.forEach(function(c){c.tech.concat(c.soft).forEach(function(s){if(VOCAB.indexOf(s)<0)VOCAB.push(s)})});
+function career(id){return CAREERS.filter(function(c){return c.id===id})[0]}
+function prof(){return store.get("cm_profile")}
+function mySkills(){var p=prof();return p&&p.skills?p.skills:[]}
+function overlap(have,need){var h=need.filter(function(s){return have.indexOf(s)>-1});return{hit:h,miss:need.filter(function(s){return h.indexOf(s)<0})}}
+function chips(a,cls){return a.map(function(s){return'<span class="chip '+cls+'">'+esc(s)+"</span>"}).join("")}
+function counter(k){return store.get(k)||0}
+function bump(k){store.set(k,counter(k)+1)}
+
+// navigation (plain clicks, no URL hash)
+var side=$("side"),scrim=$("scrim"),menu=$("menu"),tt;
+function drawer(o){side.classList.toggle("open",o);scrim.classList.toggle("show",o);menu.setAttribute("aria-expanded",String(o))}
+menu.onclick=function(){drawer(!side.classList.contains("open"))};scrim.onclick=function(){drawer(false)};
+function toast(m){var t=$("toast");t.textContent=m;t.style.display="block";clearTimeout(tt);tt=setTimeout(function(){t.style.display="none"},2800)}
+var hist=[],cur="dash";function back(){go(hist.pop()||"dash",true)}
+function go(id,isBack){
+ if(id==="premium"){toast("Premium is not available yet. Real payments are planned for Phase 4.");drawer(false);return}
+ document.querySelectorAll(".view").forEach(function(v){v.classList.toggle("on",v.id==="v-"+id)});
+ document.querySelectorAll(".side a").forEach(function(a){a.classList.toggle("on",a.getAttribute("data-go")===id)});
+ if(!isBack&&cur!==id)hist.push(cur);cur=id;drawer(false);window.scrollTo(0,0);
+ if(id==="dash")renderDash();if(id==="profile")renderProfile();if(id==="matches")renderRecs();if(id==="jobs")renderJobs();if(id==="gap")renderGap()}
+document.addEventListener("click",function(e){if(e.target.closest("[data-back]")){e.preventDefault();back();return}var el=e.target.closest("[data-go]");if(el){e.preventDefault();go(el.getAttribute("data-go"))}});
+$("dark").onchange=function(){document.documentElement.setAttribute("data-theme",this.checked?"dark":"light")};
+
+// dashboard numbers
+function renderDash(){var p=prof(),done=0;CAREERS.forEach(function(c){done+=(store.get("cm_steps_"+c.id)||[]).length});
+ var pct=0;if(p){pct=20+(p.edu?15:0)+(p.year?15:0)+(p.skills&&p.skills.length?25:0)+(p.interests&&p.interests.length?15:0)+(p.exp?10:0);pct=Math.min(pct,100)}
+ $("s1").textContent=counter("cm_n_resume");$("s2").textContent=counter("cm_n_job");$("s3").textContent=done;$("s4").textContent=pct+"%";$("pbar").style.width=pct+"%";
+ $("uname").textContent=p?p.name:"Student";setAvatar()}
+
+// profile
+$("pi").innerHTML=FIELDS.map(function(f){return'<label class="chk"><input type="checkbox" value="'+f+'">'+f+"</label>"}).join("");
+(function(){var p=prof();if(!p)return;$("pn").value=p.name||"";$("pe").value=p.edu||"";$("pb").value=p.branch||"";$("py").value=p.year||"";$("ps").value=(p.skills||[]).join(", ");$("px").value=p.exp||"";$("pm").value=p.email||"";$("pt").value=p.phone||"";$("pc").value=p.city||"";$("pu").value=p.college||"";
+ document.querySelectorAll("#pi input").forEach(function(c){c.checked=(p.interests||[]).indexOf(c.value)>-1})})();
+$("pf").addEventListener("submit",function(e){e.preventDefault();var err=$("perr");err.textContent="";$("pok").textContent="";
+ var name=$("pn").value.trim();if(!name){err.textContent="Enter your name.";return}
+ if(!$("pe").value||!$("py").value){err.textContent="Choose your education and year.";return}
+ var skills=$("ps").value.split(",").map(function(s){return s.trim().toLowerCase()}).filter(Boolean);
+ if(!skills.length){err.textContent="Add at least one skill, separated by commas.";return}
+ var em=$("pm").value.trim(),ph=$("pt").value.trim();if(em&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){err.textContent="Enter a valid email or leave it empty.";return}if(ph&&!/^\+?[0-9 ()-]{7,16}$/.test(ph)){err.textContent="Enter a valid phone number or leave it empty.";return}var ints=[];document.querySelectorAll("#pi input:checked").forEach(function(c){ints.push(c.value)});
+ store.set("cm_profile",{name:name,edu:$("pe").value,branch:$("pb").value.trim(),year:$("py").value,skills:skills,interests:ints,exp:$("px").value.trim(),email:em,phone:ph,city:$("pc").value.trim(),college:$("pu").value.trim()});
+ renderDash();renderProfile();toast("Profile saved");go("profile")});
+
+// career matches
+function score(c,p){var o=overlap(p.skills||[],c.tech);var s=c.tech.length?o.hit.length/c.tech.length:0;var i=(p.interests||[]).indexOf(c.f)>-1;return{pct:Math.round(s*70+(i?30:0)),hit:o.hit,int:i}}
+function renderRecs(){var p=prof(),box=$("recs");
+ if(!p){box.innerHTML='<p class="note">Save your profile first to see career matches.</p><button class="btn" data-go="profile">Go to My Profile</button>';return}
+ var list=CAREERS.map(function(c){return{c:c,s:score(c,p)}}).sort(function(a,b){return b.s.pct-a.s.pct}).slice(0,3);
+ box.innerHTML='<p class="demo">RULE-BASED SCORE: 70% skill overlap + 30% interest match. Not an AI prediction.</p>'+
+ list.map(function(r){var why=r.s.hit.length?"<span>You already list</span> "+chips(r.s.hit,"h"):"<span>No listed skills match yet, so this is a stretch goal.</span>";
+  if(r.s.int)why+=" <span>It fits your interest in</span> <span>"+r.c.f+"</span>.";
+  return'<div class="card"><div class="score">'+r.s.pct+'%</div><h3>'+r.c.n+'</h3><div class="bar"><i style="width:'+r.s.pct+'%"></i></div><p>'+why+"</p><p><b>Roadmap start:</b> "+r.c.steps[0]+"</p></div>"}).join("")}
+
+// explorer + selects
+$("clist").innerHTML=CAREERS.map(function(c){return'<div class="card" style="margin:0"><h3>'+c.n+'</h3><p class="sub" style="margin:0 0 6px"><span>Field</span>: <span>'+c.f+'</span></p>'+chips(c.tech,"")+"<p><b>Starter project:</b> "+c.proj+"</p></div>"}).join("");
+var opts='<option value="">Choose a career</option>'+CAREERS.map(function(c){return'<option value="'+c.id+'">'+c.n+"</option>"}).join("");
+$("rtarget").innerHTML=opts;$("gt").innerHTML=opts;
+
+// resume analyzer
+$("rf").addEventListener("submit",async function(e){e.preventDefault();var err=$("rerr");err.textContent="";
+ var f=$("rfile").files[0];
+ if(f){if(!(f.type==="application/pdf"||/\.pdf$/i.test(f.name))){err.textContent="That file is not a PDF.";return}
+  if(f.size>5*1024*1024){err.textContent="The PDF is larger than 5 MB.";return}}
+ var text=$("rtext").value.trim().toLowerCase();
+ if(text.length<80){err.textContent="Paste at least 80 characters of resume text.";return}
+ if(!$("rtarget").value){err.textContent="Choose a target career.";return}
+ var b=$("rbtn");busy(b,true);await wait(900);busy(b,false,"Check Resume");bump("cm_n_resume");
+ var found=VOCAB.filter(function(s){return text.indexOf(s)>-1});var c=career($("rtarget").value);
+ var o=overlap(found,c.tech.concat(c.soft));var p=prof();var who=p?esc(p.name):"This student";
+ var tips=[];if(!/\d/.test(text))tips.push("Add numbers that show results, such as a count or a percentage.");
+ if(text.indexOf("project")<0)tips.push("Add a projects section.");if(text.indexOf("education")<0)tips.push("Add a clear education section.");
+ if(o.miss.length)tips.push("<span>Learn or show evidence for</span>: "+o.miss.slice(0,3).map(esc).join(", ")+".");
+ if(!tips.length)tips.push("No rule-based issues found. A human review is still useful.");
+ $("rres").innerHTML='<div class="card"><p class="demo">RULE-BASED CHECK: keyword matching, not an AI model</p><h3>Skills found</h3>'+(found.length?chips(found,"h"):"<p>No known skill words found.</p>")+
+ "<h3 style='margin-top:14px'><span>Missing for</span> "+c.n+"</h3>"+(o.miss.length?chips(o.miss,"m"):"<p>None of the common skills are missing.</p>")+
+ "<h3 style='margin-top:14px'>Suggestions</h3><ul>"+tips.map(function(t){return"<li>"+t+"</li>"}).join("")+"</ul><h3>Summary draft (template, edit it)</h3><p>"+who+" is a student aiming for a role as "+c.n+(found.length?", with skills in "+found.slice(0,5).map(esc).join(", "):"")+". Seeking opportunities to build practical experience.</p></div>";
+ renderDash()});
+
+// job analyzer (dashboard)
+$("jf").addEventListener("submit",async function(e){e.preventDefault();var err=$("je");err.textContent="";
+ var title=$("jt").value.trim(),d=$("jd").value.trim().toLowerCase();
+ if(!title){err.textContent="Enter a job title.";return}
+ if(d.length<50){err.textContent="Paste a longer job description (at least 50 characters).";return}
+ var b=$("jb");busy(b,true);await wait(900);busy(b,false,"Analyze Job Description");bump("cm_n_job");
+ var need=VOCAB.filter(function(s){return d.indexOf(s)>-1}),o=overlap(mySkills(),need);
+ $("jr").innerHTML='<div class="card" style="margin-top:12px"><p class="demo">RULE-BASED: matches known skill words only</p><h3>'+esc(title)+"</h3>"+
+ (need.length?"<p><b>Skills asked for:</b> "+chips(need,"")+"</p>"+(prof()?"<p><b>You have:</b> "+(chips(o.hit,"h")||"none")+"</p><p><b>Missing:</b> "+(chips(o.miss,"m")||"none")+"</p>":'<p class="note">Save your profile to compare your skills.</p>'):"<p>No known skill words were found in this text.</p>")+"</div>";
+ renderDash()});
+
+// jobs
+function renderJobs(){var have=mySkills(),p=prof(),l=$("fl").value,r=$("fr").value,x=$("fx").value;
+ var list=JOBS.filter(function(j){return(!l||j.l===l)&&(!r||j.ty===r)&&(!x||j.x===x)}).map(function(j){return{j:j,m:Math.round(overlap(have,j.s).hit.length/j.s.length*100)}}).sort(function(a,b){return b.m-a.m});
+ $("jlist").innerHTML=(p?"":'<p class="note">Save your profile to see skill match percentages.</p>')+
+ (list.length?list.map(function(r){var j=r.j;return'<div class="card"><h3>'+j.t+'</h3><p class="sub" style="margin:0"><span>Sample Company</span> &middot; <span>'+j.ty+'</span> &middot; <span>'+j.l+'</span> &middot; <span>'+j.x+'</span></p>'+(p?"<p><b>Skill match:</b> "+r.m+"%</p>":"")+j.s.map(function(s){return'<span class="chip'+(have.indexOf(s)>-1?" h":"")+'">'+s+"</span>"}).join("")+'<p class="sub">Sample listing: no real application link.</p></div>'}).join(""):"<p>No listings match these filters.</p>")}
+["fl","fr","fx"].forEach(function(i){$(i).onchange=renderJobs});
+
+// skill gap + roadmap
+function renderGap(){var id=$("gt").value,box=$("gres");if(!id){box.innerHTML='<p class="note">Choose a career above.</p>';return}
+ var c=career(id),have=mySkills(),p=prof(),t=overlap(have,c.tech),s=overlap(have,c.soft);
+ var done=store.get("cm_steps_"+id)||[],pct=Math.round(done.length/c.steps.length*100);
+ box.innerHTML=(p?"":'<p class="note">Save your profile to compare your own skills.</p>')+
+ '<div class="card"><h3><span>Skill gap</span>: '+c.n+"</h3><p><b>Technical you have:</b> "+(chips(t.hit,"h")||"none yet")+"</p><p><b>Technical missing:</b> "+(chips(t.miss,"m")||"none")+"</p><p><b>Soft skills to show:</b> "+c.soft.map(function(x){return'<span class="chip'+(have.indexOf(x)>-1?" h":"")+'">'+x+"</span>"}).join("")+"</p><p><b>Project idea:</b> "+c.proj+"</p></div>"+
+ '<div class="card"><h3><span>Roadmap progress</span>: '+pct+'%</h3><div class="bar"><i style="width:'+pct+'%"></i></div>'+c.steps.map(function(st,i){return'<label class="chk" style="display:flex;margin:10px 0"><input type="checkbox" data-i="'+i+'"'+(done.indexOf(i)>-1?" checked":"")+"> "+st+"</label>"}).join("")+'<p class="sub">Progress is saved in this browser only. Search for free courses on each topic.</p></div>';
+ box.querySelectorAll("input[data-i]").forEach(function(cb){cb.onchange=function(){var d=[];box.querySelectorAll("input[data-i]:checked").forEach(function(k){d.push(+k.getAttribute("data-i"))});store.set("cm_steps_"+id,d);renderGap();renderDash()}})}
+$("gt").onchange=renderGap;
+
+// login + contact (input checks only)
+$("lf").addEventListener("submit",function(e){e.preventDefault();$("lerr").textContent="";$("lok").textContent="";
+ if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test($("le").value.trim())){$("lerr").textContent="Enter a valid email, like name@example.com.";return}
+ if($("lp").value.length<8){$("lerr").textContent="Password needs at least 8 characters.";return}
+ $("lok").textContent="Input looks valid. No account was created or checked. Real login comes in Phase 2.";$("lp").value=""});
+$("cf").addEventListener("submit",function(e){e.preventDefault();$("cerr").textContent="";$("cok").textContent="";
+ if(!$("cn").value.trim()){$("cerr").textContent="Enter your name.";return}
+ if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test($("ce").value.trim())){$("cerr").textContent="Enter a valid email.";return}
+ if($("cm").value.trim().length<10){$("cerr").textContent="Write a message of at least 10 characters.";return}
+ $("cok").textContent="Message was NOT sent. This form has no server yet."});
+
+// ---- avatar + photo + profile info ----
+function setAvatar(){var p=prof(),ph=store.get("cm_photo"),l=p?p.name.charAt(0).toUpperCase():"S";
+ [$("av"),$("phbig")].forEach(function(el){if(!el)return;if(ph)el.innerHTML='<img alt="" src="'+ph+'">';else el.textContent=l})}
+function renderProfile(){var p=prof(),box=$("pinfo");setAvatar();
+ if(!p){box.innerHTML='<p class="sub">No profile saved yet. Fill the form below.</p>';return}
+ function r(k,v){return'<div class="ir"><b>'+k+"</b><span>"+(v||"<i>Not added</i>")+"</span></div>"}
+ function sp(x){return x?"<span>"+esc(x)+"</span>":""}
+ box.innerHTML=r("Name",esc(p.name))+r("Education",sp(p.edu))+r("Branch / major",esc(p.branch||""))+r("Year",sp(p.year))+r("Email",esc(p.email||""))+r("Phone",esc(p.phone||""))+r("City",esc(p.city||""))+r("College / university",esc(p.college||""))+r("Interests",chips(p.interests||[],""))+r("Skills",chips(p.skills||[],"h"))+r("Experience and qualifications",esc(p.exp||""))}
+$("pph").addEventListener("change",function(){var inp=this,f=inp.files[0],er=$("pherr");er.textContent="";if(!f)return;
+ if(["image/jpeg","image/png","image/webp"].indexOf(f.type)<0){er.textContent="Choose a JPG, PNG or WebP image.";inp.value="";return}
+ if(f.size>3*1024*1024){er.textContent="The image is larger than 3 MB.";inp.value="";return}
+ var rd=new FileReader();rd.onerror=function(){er.textContent="Could not read that image."};
+ rd.onload=function(){var img=new Image();img.onerror=function(){er.textContent="Could not read that image."};
+  img.onload=function(){var s=256,c=document.createElement("canvas");c.width=c.height=s;var m=Math.min(img.width,img.height);
+   c.getContext("2d").drawImage(img,(img.width-m)/2,(img.height-m)/2,m,m,0,0,s,s);store.set("cm_photo",c.toDataURL("image/jpeg",0.8));inp.value="";setAvatar()};
+  img.src=rd.result};rd.readAsDataURL(f)});
+$("phrm").onclick=function(){store.set("cm_photo","");setAvatar()};
+
+// ---- back buttons ----
+document.querySelectorAll(".view:not(#v-dash)").forEach(function(v){v.insertAdjacentHTML("afterbegin",'<button type="button" class="back" data-back><span aria-hidden="true">&larr;</span> <span>Back</span></button>')});
+
+// ---- background colour ----
+var BG=["#f3efff","#fbf6ec","#eaf7f2","#f4f6fc"];
+function setBg(c){document.documentElement.style.setProperty("--bgc",c);store.set("cm_bg",c)}
+$("sw").innerHTML=BG.map(function(c){return'<button type="button" class="swb" data-bg="'+c+'" style="background:'+c+'" aria-label="Background colour"></button>'}).join("");
+$("sw").addEventListener("click",function(e){var b=e.target.closest("[data-bg]");if(b)setBg(b.getAttribute("data-bg"))});
+if(store.get("cm_bg"))setBg(store.get("cm_bg"));
+
+// ---- languages: English / Hindi / Marathi ----
+var D={
+"Student":["विद्यार्थी","विद्यार्थी"],"Saved in this browser":["इस ब्राउज़र में सेव","या ब्राउझरमध्ये सेव्ह"],
+"Dashboard":["डैशबोर्ड","डॅशबोर्ड"],"My Profile":["मेरी प्रोफ़ाइल","माझी प्रोफाइल"],"Career Matches":["करियर मैच","करिअर मॅच"],
+"Resume Analyzer":["रिज़्यूमे विश्लेषक","रेझ्युमे विश्लेषक"],"Jobs & Internships":["नौकरियाँ और इंटर्नशिप","नोकऱ्या आणि इंटर्नशिप"],
+"Skill Gap & Roadmap":["स्किल गैप और रोडमैप","स्किल गॅप आणि रोडमॅप"],"Career Explorer":["करियर एक्सप्लोरर","करिअर एक्सप्लोरर"],
+"ACCOUNT":["खाता","खाते"],"About & Contact":["हमारे बारे में और संपर्क","आमच्याबद्दल आणि संपर्क"],"Login / Sign Up":["लॉगिन / साइन अप","लॉगिन / साइन अप"],
+"APPEARANCE":["दिखावट","स्वरूप"],"Dark mode":["डार्क मोड","डार्क मोड"],"Background":["बैकग्राउंड","बॅकग्राउंड"],"Back":["वापस","मागे"],
+"Welcome to CareerMatch AI":["CareerMatch AI में आपका स्वागत है","CareerMatch AI मध्ये आपले स्वागत आहे"],
+"Your student career companion":["आपका विद्यार्थी करियर साथी","तुमचा विद्यार्थी करिअर सोबती"],
+"PROTOTYPE: results use simple rules on your input. No AI model is connected yet.":["प्रोटोटाइप: नतीजे आपकी जानकारी पर सरल नियमों से बनते हैं। अभी कोई AI मॉडल जुड़ा नहीं है।","प्रोटोटाइप: निकाल तुमच्या माहितीवर साध्या नियमांनी बनतात. अजून कोणतेही AI मॉडेल जोडलेले नाही."],
+"Find skills in your resume text":["अपने रिज़्यूमे के टेक्स्ट में स्किल खोजें","तुमच्या रेझ्युमेच्या मजकुरात स्किल शोधा"],
+"Student Profile":["विद्यार्थी प्रोफ़ाइल","विद्यार्थी प्रोफाइल"],"Your information and photo":["आपकी जानकारी और फोटो","तुमची माहिती आणि फोटो"],
+"See careers that fit your profile":["अपनी प्रोफ़ाइल से मेल खाते करियर देखें","तुमच्या प्रोफाइलशी जुळणारे करिअर पहा"],
+"Compare skills and track steps":["स्किल की तुलना करें और स्टेप ट्रैक करें","स्किलची तुलना करा आणि स्टेप्स ट्रॅक करा"],
+"Sample listings with skill match":["स्किल मैच के साथ नमूना लिस्टिंग","स्किल मॅचसह नमुना लिस्टिंग"],
+"Premium":["प्रीमियम","प्रीमियम"],"Coming soon":["जल्द आ रहा है","लवकरच येत आहे"],
+"Your Progress":["आपकी प्रगति","तुमची प्रगती"],"Resumes checked":["जाँचे गए रिज़्यूमे","तपासलेले रेझ्युमे"],"Job analyses":["जॉब विश्लेषण","जॉब विश्लेषण"],
+"Roadmap steps done":["पूरे हुए रोडमैप स्टेप","पूर्ण झालेले रोडमॅप स्टेप्स"],"Profile complete":["प्रोफ़ाइल पूरी","प्रोफाइल पूर्ण"],"Profile completion":["प्रोफ़ाइल पूर्णता","प्रोफाइल पूर्णता"],
+"Job Analyzer":["जॉब विश्लेषक","जॉब विश्लेषक"],"Job title":["नौकरी का शीर्षक","नोकरीचे शीर्षक"],"Job description":["नौकरी का विवरण","नोकरीचे वर्णन"],
+"Analyze Job Description":["विवरण का विश्लेषण करें","वर्णनाचे विश्लेषण करा"],"Working...":["काम चल रहा है...","काम सुरू आहे..."],
+"e.g., Front-end Developer":["जैसे, फ्रंट-एंड डेवलपर","उदा., फ्रंट-एंड डेव्हलपर"],
+"Paste the job description here (at least 50 characters)":["यहाँ नौकरी का विवरण पेस्ट करें (कम से कम 50 अक्षर)","येथे नोकरीचे वर्णन पेस्ट करा (किमान 50 अक्षरे)"],
+"Saved only in this browser on this device.":["सिर्फ़ इसी डिवाइस के ब्राउज़र में सेव है।","फक्त याच डिव्हाइसच्या ब्राउझरमध्ये सेव्ह आहे."],
+"My Information":["मेरी जानकारी","माझी माहिती"],"Edit information":["जानकारी बदलें","माहिती बदला"],"Not added":["जोड़ा नहीं गया","जोडलेले नाही"],
+"No profile saved yet. Fill the form below.":["अभी तक प्रोफ़ाइल सेव नहीं है। नीचे फ़ॉर्म भरें।","अजून प्रोफाइल सेव्ह नाही. खालील फॉर्म भरा."],
+"Profile photo":["प्रोफ़ाइल फोटो","प्रोफाइल फोटो"],"Choose photo":["फोटो चुनें","फोटो निवडा"],"Remove photo":["फोटो हटाएँ","फोटो काढा"],
+"Photo stays on this device only.":["फोटो सिर्फ़ इसी डिवाइस पर रहता है।","फोटो फक्त याच डिव्हाइसवर राहतो."],
+"Choose a JPG, PNG or WebP image.":["JPG, PNG या WebP इमेज चुनें।","JPG, PNG किंवा WebP इमेज निवडा."],
+"The image is larger than 3 MB.":["इमेज 3 MB से बड़ी है।","इमेज 3 MB पेक्षा मोठी आहे."],"Could not read that image.":["वह इमेज पढ़ी नहीं जा सकी।","ती इमेज वाचता आली नाही."],
+"Name":["नाम","नाव"],"Email":["ईमेल","ईमेल"],"Phone":["फ़ोन","फोन"],"City":["शहर","शहर"],"College / university":["कॉलेज / विश्वविद्यालय","महाविद्यालय / विद्यापीठ"],
+"Education":["शिक्षा","शिक्षण"],"Branch / major":["ब्रांच / मुख्य विषय","शाखा / मुख्य विषय"],"Year":["वर्ष","वर्ष"],"Interests":["रुचियाँ","आवडी"],"Skills":["स्किल","स्किल्स"],
+"Skills (comma separated)":["स्किल (कॉमा से अलग करें)","स्किल्स (स्वल्पविरामाने वेगळे करा)"],
+"e.g. html, css, python, communication":["जैसे html, css, python, communication","उदा. html, css, python, communication"],
+"Experience and qualifications":["अनुभव और योग्यताएँ","अनुभव आणि पात्रता"],"Save Profile":["प्रोफ़ाइल सेव करें","प्रोफाइल सेव्ह करा"],
+"Choose":["चुनें","निवडा"],"High school":["हाई स्कूल","हायस्कूल"],"Diploma":["डिप्लोमा","डिप्लोमा"],"Bachelor’s":["स्नातक","पदवी"],"Master’s":["स्नातकोत्तर","पदव्युत्तर"],
+"1st":["पहला","पहिले"],"2nd":["दूसरा","दुसरे"],"3rd":["तीसरा","तिसरे"],"4th":["चौथा","चौथे"],"Graduated":["पास आउट","पदवीधर"],
+"Technology":["टेक्नोलॉजी","तंत्रज्ञान"],"Data":["डेटा","डेटा"],"Design":["डिज़ाइन","डिझाइन"],"Business":["बिज़नेस","व्यवसाय"],"Security":["सिक्योरिटी","सिक्युरिटी"],"Marketing":["मार्केटिंग","मार्केटिंग"],
+"Enter your name.":["अपना नाम लिखें।","तुमचे नाव लिहा."],"Choose your education and year.":["अपनी शिक्षा और वर्ष चुनें।","तुमचे शिक्षण आणि वर्ष निवडा."],
+"Add at least one skill, separated by commas.":["कम से कम एक स्किल जोड़ें, कॉमा से अलग करके।","किमान एक स्किल जोडा, स्वल्पविरामाने वेगळी करून."],
+"Enter a valid email or leave it empty.":["सही ईमेल लिखें या खाली छोड़ें।","योग्य ईमेल लिहा किंवा रिकामे सोडा."],
+"Enter a valid phone number or leave it empty.":["सही फ़ोन नंबर लिखें या खाली छोड़ें।","योग्य फोन नंबर लिहा किंवा रिकामा सोडा."],
+"Profile saved":["प्रोफ़ाइल सेव हो गई","प्रोफाइल सेव्ह झाली"],
+"Save your profile first to see career matches.":["करियर मैच देखने के लिए पहले प्रोफ़ाइल सेव करें।","करिअर मॅच पाहण्यासाठी आधी प्रोफाइल सेव्ह करा."],
+"Go to My Profile":["मेरी प्रोफ़ाइल पर जाएँ","माझ्या प्रोफाइलवर जा"],
+"RULE-BASED SCORE: 70% skill overlap + 30% interest match. Not an AI prediction.":["नियम-आधारित स्कोर: 70% स्किल मेल + 30% रुचि मेल। यह AI का अनुमान नहीं है।","नियम-आधारित स्कोर: 70% स्किल जुळणी + 30% आवड जुळणी. हा AI चा अंदाज नाही."],
+"You already list":["आपने पहले से लिखा है","तुम्ही आधीच लिहिले आहे"],
+"No listed skills match yet, so this is a stretch goal.":["अभी कोई लिखी स्किल मेल नहीं खाती, इसलिए यह आगे का लक्ष्य है।","अजून लिहिलेली कोणतीही स्किल जुळत नाही, म्हणून हे पुढचे ध्येय आहे."],
+"It fits your interest in":["यह आपकी रुचि से मेल खाता है:","हे तुमच्या आवडीशी जुळते:"],"Roadmap start:":["रोडमैप की शुरुआत:","रोडमॅपची सुरुवात:"],
+"Choose a PDF and paste its text. This step finds known skill words. It is not AI.":["PDF चुनें और उसका टेक्स्ट पेस्ट करें। यह स्टेप जानी-पहचानी स्किल के शब्द खोजता है। यह AI नहीं है।","PDF निवडा आणि त्याचा मजकूर पेस्ट करा. हे स्टेप ओळखीचे स्किल शब्द शोधते. हे AI नाही."],
+"Resume PDF (max 5 MB)":["रिज़्यूमे PDF (अधिकतम 5 MB)","रेझ्युमे PDF (कमाल 5 MB)"],
+"The PDF stays on your phone. Automatic PDF text reading is added in a later step.":["PDF आपके फ़ोन में ही रहती है। PDF का टेक्स्ट अपने-आप पढ़ना बाद के स्टेप में जुड़ेगा।","PDF तुमच्या फोनमध्येच राहते. PDF चा मजकूर आपोआप वाचणे पुढील टप्प्यात जोडले जाईल."],
+"Resume text":["रिज़्यूमे का टेक्स्ट","रेझ्युमेचा मजकूर"],
+"Copy the text of your resume and paste it here":["अपने रिज़्यूमे का टेक्स्ट कॉपी करके यहाँ पेस्ट करें","तुमच्या रेझ्युमेचा मजकूर कॉपी करून येथे पेस्ट करा"],
+"Target career":["लक्ष्य करियर","लक्ष्य करिअर"],"Choose a career":["करियर चुनें","करिअर निवडा"],"Check Resume":["रिज़्यूमे जाँचें","रेझ्युमे तपासा"],
+"That file is not a PDF.":["वह फ़ाइल PDF नहीं है।","ती फाइल PDF नाही."],"The PDF is larger than 5 MB.":["PDF 5 MB से बड़ी है।","PDF 5 MB पेक्षा मोठी आहे."],
+"Paste at least 80 characters of resume text.":["रिज़्यूमे का कम से कम 80 अक्षर का टेक्स्ट पेस्ट करें।","रेझ्युमेचा किमान 80 अक्षरांचा मजकूर पेस्ट करा."],
+"Choose a target career.":["लक्ष्य करियर चुनें।","लक्ष्य करिअर निवडा."],
+"RULE-BASED CHECK: keyword matching, not an AI model":["नियम-आधारित जाँच: कीवर्ड मिलान, AI मॉडल नहीं","नियम-आधारित तपासणी: कीवर्ड जुळवणी, AI मॉडेल नाही"],
+"Skills found":["मिली हुई स्किल","सापडलेली स्किल्स"],"No known skill words found.":["कोई जानी-पहचानी स्किल नहीं मिली।","ओळखीचे स्किल शब्द सापडले नाहीत."],
+"Missing for":["इसके लिए कमी","यासाठी कमी"],"None of the common skills are missing.":["सामान्य स्किल में से कोई कम नहीं है।","सामान्य स्किल्सपैकी काहीही कमी नाही."],
+"Suggestions":["सुझाव","सूचना"],
+"Add numbers that show results, such as a count or a percentage.":["नतीजे दिखाने वाले अंक जोड़ें, जैसे गिनती या प्रतिशत।","निकाल दाखवणारे आकडे जोडा, जसे संख्या किंवा टक्केवारी."],
+"Add a projects section.":["प्रोजेक्ट्स का सेक्शन जोड़ें।","प्रोजेक्ट्स विभाग जोडा."],"Add a clear education section.":["साफ़ शिक्षा सेक्शन जोड़ें।","स्पष्ट शिक्षण विभाग जोडा."],
+"Learn or show evidence for":["सीखें या इसका प्रमाण दिखाएँ","शिका किंवा याचा पुरावा दाखवा"],
+"No rule-based issues found. A human review is still useful.":["नियमों के हिसाब से कोई कमी नहीं मिली। फिर भी किसी इंसान से जँचवाना उपयोगी है।","नियमांनुसार कोणतीही कमतरता आढळली नाही. तरीही माणसाकडून तपासणी उपयुक्त आहे."],
+"Summary draft (template, edit it)":["सारांश ड्राफ़्ट (टेम्पलेट, इसे बदलें)","सारांश मसुदा (टेम्पलेट, यात बदल करा)"],
+"SAMPLE LISTINGS: not real openings":["नमूना लिस्टिंग: असली वैकेंसी नहीं","नमुना लिस्टिंग: खऱ्या जागा नाहीत"],
+"Location":["स्थान","ठिकाण"],"Role type":["भूमिका का प्रकार","भूमिकेचा प्रकार"],"Experience":["अनुभव","अनुभव"],"All":["सभी","सर्व"],
+"Remote":["रिमोट","रिमोट"],"On-site":["ऑन-साइट","ऑन-साइट"],"Hybrid":["हाइब्रिड","हायब्रिड"],"Job":["नौकरी","नोकरी"],"Internship":["इंटर्नशिप","इंटर्नशिप"],"Fresher":["फ्रेशर","फ्रेशर"],"0-2 years":["0-2 साल","0-2 वर्षे"],
+"Save your profile to see skill match percentages.":["स्किल मैच प्रतिशत देखने के लिए प्रोफ़ाइल सेव करें।","स्किल मॅच टक्केवारी पाहण्यासाठी प्रोफाइल सेव्ह करा."],
+"No listings match these filters.":["इन फ़िल्टर से कोई लिस्टिंग नहीं मिली।","या फिल्टरशी कोणतीही लिस्टिंग जुळत नाही."],
+"Skill match:":["स्किल मैच:","स्किल मॅच:"],"Sample Company":["नमूना कंपनी","नमुना कंपनी"],
+"Sample listing: no real application link.":["नमूना लिस्टिंग: कोई असली आवेदन लिंक नहीं।","नमुना लिस्टिंग: खरी अर्ज लिंक नाही."],
+"Pick a target career to compare it with your profile skills.":["अपनी प्रोफ़ाइल की स्किल से तुलना करने के लिए लक्ष्य करियर चुनें।","तुमच्या प्रोफाइलच्या स्किल्सशी तुलना करण्यासाठी लक्ष्य करिअर निवडा."],
+"Choose a career above.":["ऊपर करियर चुनें।","वर करिअर निवडा."],
+"Save your profile to compare your own skills.":["अपनी स्किल की तुलना के लिए प्रोफ़ाइल सेव करें।","स्वतःच्या स्किल्सची तुलना करण्यासाठी प्रोफाइल सेव्ह करा."],
+"Skill gap":["स्किल गैप","स्किल गॅप"],"Technical you have:":["आपके पास तकनीकी:","तुमच्याकडे तांत्रिक:"],"none yet":["अभी कोई नहीं","अजून काहीही नाही"],
+"Technical missing:":["तकनीकी कमी:","तांत्रिक कमी:"],"none":["कोई नहीं","काहीही नाही"],
+"Soft skills to show:":["दिखाने लायक सॉफ्ट स्किल:","दाखवण्यासारखी सॉफ्ट स्किल्स:"],"Project idea:":["प्रोजेक्ट आइडिया:","प्रोजेक्ट कल्पना:"],
+"Roadmap progress":["रोडमैप प्रगति","रोडमॅप प्रगती"],
+"Progress is saved in this browser only. Search for free courses on each topic.":["प्रगति सिर्फ़ इसी ब्राउज़र में सेव है। हर विषय के लिए मुफ़्त कोर्स खोजें।","प्रगती फक्त याच ब्राउझरमध्ये सेव्ह आहे. प्रत्येक विषयासाठी मोफत कोर्स शोधा."],
+"Sample career summaries with common skills.":["सामान्य स्किल के साथ करियर के नमूना सारांश।","सामान्य स्किल्ससह करिअरचे नमुना सारांश."],
+"Field":["क्षेत्र","क्षेत्र"],"Starter project:":["शुरुआती प्रोजेक्ट:","सुरुवातीचा प्रोजेक्ट:"],
+"CareerMatch AI is a student project for exploring careers and skills. It is a prototype and gives general guidance only.":["CareerMatch AI करियर और स्किल जानने के लिए एक विद्यार्थी प्रोजेक्ट है। यह प्रोटोटाइप है और सिर्फ़ सामान्य मार्गदर्शन देता है।","CareerMatch AI हा करिअर आणि स्किल्स जाणून घेण्यासाठी विद्यार्थी प्रोजेक्ट आहे. हा प्रोटोटाइप असून फक्त सामान्य मार्गदर्शन देतो."],
+"Message":["संदेश","संदेश"],"Send":["भेजें","पाठवा"],"Enter a valid email.":["सही ईमेल लिखें।","योग्य ईमेल लिहा."],
+"Write a message of at least 10 characters.":["कम से कम 10 अक्षर का संदेश लिखें।","किमान 10 अक्षरांचा संदेश लिहा."],
+"Message was NOT sent. This form has no server yet.":["संदेश भेजा नहीं गया। इस फ़ॉर्म का अभी कोई सर्वर नहीं है।","संदेश पाठवला गेला नाही. या फॉर्मला अजून सर्व्हर नाही."],
+"Real accounts are added in Phase 2. This form only checks your input.":["असली खाते फ़ेज़ 2 में जुड़ेंगे। यह फ़ॉर्म सिर्फ़ आपकी जानकारी जाँचता है।","खरी खाती फेज 2 मध्ये जोडली जातील. हा फॉर्म फक्त तुमची माहिती तपासतो."],
+"Password (8+ characters)":["पासवर्ड (8+ अक्षर)","पासवर्ड (8+ अक्षरे)"],"Log In":["लॉग इन","लॉग इन"],"Sign Up":["साइन अप","साइन अप"],
+"Enter a valid email, like name@example.com.":["सही ईमेल लिखें, जैसे name@example.com।","योग्य ईमेल लिहा, जसे name@example.com."],
+"Password needs at least 8 characters.":["पासवर्ड कम से कम 8 अक्षर का होना चाहिए।","पासवर्ड किमान 8 अक्षरांचा असावा."],
+"Input looks valid. No account was created or checked. Real login comes in Phase 2.":["जानकारी सही लग रही है। कोई खाता बना या जाँचा नहीं गया। असली लॉगिन फ़ेज़ 2 में आएगा।","माहिती योग्य दिसते. कोणतेही खाते तयार किंवा तपासले गेले नाही. खरे लॉगिन फेज 2 मध्ये येईल."],
+"Enter a job title.":["नौकरी का शीर्षक लिखें।","नोकरीचे शीर्षक लिहा."],
+"Paste a longer job description (at least 50 characters).":["लंबा नौकरी विवरण पेस्ट करें (कम से कम 50 अक्षर)।","मोठे नोकरी वर्णन पेस्ट करा (किमान 50 अक्षरे)."],
+"RULE-BASED: matches known skill words only":["नियम-आधारित: सिर्फ़ जानी-पहचानी स्किल के शब्द मिलाता है","नियम-आधारित: फक्त ओळखीचे स्किल शब्द जुळवतो"],
+"Skills asked for:":["माँगी गई स्किल:","मागितलेली स्किल्स:"],"You have:":["आपके पास:","तुमच्याकडे:"],"Missing:":["कमी:","कमी:"],
+"Save your profile to compare your skills.":["अपनी स्किल की तुलना के लिए प्रोफ़ाइल सेव करें।","तुमच्या स्किल्सची तुलना करण्यासाठी प्रोफाइल सेव्ह करा."],
+"No known skill words were found in this text.":["इस टेक्स्ट में कोई जानी-पहचानी स्किल नहीं मिली।","या मजकुरात ओळखीचे स्किल शब्द सापडले नाहीत."],
+"Premium is not available yet. Real payments are planned for Phase 4.":["प्रीमियम अभी उपलब्ध नहीं है। असली भुगतान फ़ेज़ 4 में आएगा।","प्रीमियम अजून उपलब्ध नाही. खरे पेमेंट फेज 4 मध्ये येईल."]
+};
+var LANG=store.get("cm_lang")||"en";
+function tr(s){var t=D[s];return t&&LANG!=="en"?t[LANG==="hi"?0:1]:s}
+function fix(n){if(n.__o===undefined){var v=n.nodeValue,tv=v.trim();if(!tv){n.__o=null;return}n.__o=tv;n.__f=v}
+ if(n.__o===null)return;n.nodeValue=n.__f.replace(n.__o,tr(n.__o))}
+function fixPh(el){if(el.__ph===undefined)el.__ph=el.getAttribute("placeholder");el.setAttribute("placeholder",tr(el.__ph))}
+function walk(root){var w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:function(n){var t=n.parentNode&&n.parentNode.nodeName;return t==="SCRIPT"||t==="STYLE"?NodeFilter.FILTER_REJECT:NodeFilter.FILTER_ACCEPT}}),n;
+ while(n=w.nextNode())fix(n);if(root.querySelectorAll)root.querySelectorAll("[placeholder]").forEach(fixPh)}
+new MutationObserver(function(ms){ms.forEach(function(m){m.addedNodes.forEach(function(n){if(n.nodeType===3)fix(n);else if(n.nodeType===1)walk(n)})})}).observe(document.body,{childList:true,subtree:true});
+$("lang").value=LANG;document.documentElement.lang=LANG;
+$("lang").onchange=function(){LANG=this.value;store.set("cm_lang",LANG);document.documentElement.lang=LANG;walk(document.body)};
+renderDash();renderProfile();walk(document.body);
+</script>
+</body>
+</html>
