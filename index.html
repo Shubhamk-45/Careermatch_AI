@@ -2,181 +2,552 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>CareerMatch AI</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DeepfakeGuard – Responsible AI · Cyber Resilience · Digital Trust</title>
 <style>
-:root{--bgc:#f3efff;--bg:var(--bgc);--panel:#fff;--text:#14193a;--muted:#5d6385;--line:#e3e6f3;--navy:#0b1437;--purple:#7c3aed;--soft:#ede9fe;--err:#b42318;--ok:#067647;
- box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0a1030;--panel:#131b45;--text:#eef0ff;--muted:#a9afd6;--line:#252e63;--soft:#2a2166;color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#0a1030;--panel:#131b45;--text:#eef0ff;--muted:#a9afd6;--line:#252e63;--soft:#2a2166;color-scheme:dark}
-*{box-sizing:border-box}
-body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.5}
-:focus-visible{outline:3px solid var(--purple);outline-offset:2px}
-.top{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--navy);color:#fff;position:sticky;top:0;z-index:20}
-.top button{background:none;border:1px solid #2b3877;color:#fff;border-radius:8px;font-size:1.3rem;padding:2px 11px;cursor:pointer}
-.brand{font-weight:800}.brand span{color:#b79cff}
-.side{position:fixed;inset:0 auto 0 0;width:250px;background:var(--panel);border-right:1px solid var(--line);padding:70px 14px 18px;transform:translateX(-100%);transition:transform .2s;z-index:15;overflow-y:auto}
-.side.open{transform:none}
-.user{display:flex;gap:10px;align-items:center;padding-bottom:14px;border-bottom:1px solid var(--line);margin-bottom:10px}
-.avatar{width:38px;height:38px;border-radius:50%;background:var(--purple);color:#fff;display:grid;place-items:center;font-weight:700}
-.user small{color:var(--muted);display:block}
-.side a{display:block;padding:11px 12px;border-radius:8px;color:var(--text);text-decoration:none;font-weight:600;font-size:.95rem;cursor:pointer}
-.side a.on{background:var(--soft);color:var(--purple)}
-.side h4{margin:16px 12px 4px;font-size:.75rem;letter-spacing:.06em;color:var(--muted)}
-.theme{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;font-weight:600;font-size:.95rem}
-main{padding:20px 16px 40px;max-width:1000px;margin:0 auto}
-.view{display:none}.view.on{display:block}
-h1{margin:0;font-size:1.5rem}h2{margin:0 0 4px;font-size:1.4rem}h3{margin:0 0 8px}
-.sub{color:var(--muted);margin:2px 0 14px}
-.demo{display:inline-block;background:var(--soft);color:var(--purple);font-weight:700;font-size:.82rem;padding:6px 10px;border-radius:6px;margin-bottom:14px}
-.tiles{display:grid;grid-template-columns:1fr;gap:12px}
-.tile{border:0;text-align:left;color:#fff;border-radius:14px;padding:18px;cursor:pointer;font:inherit;min-height:110px}
-.tile b{display:block;font-size:1.05rem;margin-bottom:4px}.tile span{font-size:.88rem;opacity:.95}
-.t1{background:linear-gradient(135deg,#8b5cf6,#6d28d9)}.t2{background:linear-gradient(135deg,#ec4899,#be185d)}
-.t3{background:linear-gradient(135deg,#d97706,#b45309)}.t4{background:linear-gradient(135deg,#0e9fb5,#0b6f83)}
-.t5{background:linear-gradient(135deg,#e5584b,#b93a2f)}.t6{background:linear-gradient(135deg,#6d28d9,#3b1a8f)}
-.grid2{display:grid;grid-template-columns:1fr;gap:14px;margin-top:16px}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;margin-top:14px}
-.grid2 .card{margin-top:0}
-.card h2{font-size:1.1rem}
-.mini{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.mini div{background:var(--bg);border-radius:10px;padding:12px}.mini b{font-size:1.4rem;display:block}.mini span{color:var(--muted);font-size:.85rem}
-.bar{background:var(--line);height:9px;border-radius:6px;margin-top:6px;overflow:hidden}.bar i{display:block;height:100%;background:var(--purple)}
-label{display:block;font-weight:700;margin:12px 0 5px;font-size:.9rem}
-input,textarea,select{width:100%;font:inherit;padding:11px;border:1.5px solid var(--line);border-radius:10px;background:var(--bg);color:var(--text)}
-input[type=checkbox]{width:auto}.chk{display:inline-flex;align-items:center;gap:6px;margin:4px 12px 4px 0;font-weight:500}
-.btn{margin-top:12px;width:100%;min-height:48px;border:2px solid var(--purple);border-radius:10px;background:var(--purple);color:#fff;font:inherit;font-weight:700;cursor:pointer}
-.btn.o{background:transparent;color:var(--purple)}.btn[disabled]{opacity:.6}
-.err{color:var(--err);font-weight:600;min-height:1.2em;margin:8px 0 0}.ok{color:var(--ok);font-weight:600;margin:8px 0}
-.note{border-left:4px solid #b79cff;background:var(--soft);padding:10px 14px;border-radius:6px;font-size:.9rem;margin:12px 0}
-.score{font-size:1.6rem;font-weight:800;color:var(--purple)}
-.chip{display:inline-block;border:1px solid var(--line);border-radius:20px;padding:3px 10px;margin:3px 3px 0 0;font-size:.85rem}
-.chip.m{border-color:var(--err);color:var(--err)}.chip.h{border-color:var(--ok);color:var(--ok)}
-ul{padding-left:20px;margin:6px 0}
-.toast{position:fixed;left:16px;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));background:var(--navy);color:#fff;padding:14px;border-radius:10px;z-index:30;display:none}
-.scrim{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:12;display:none}.scrim.show{display:block}
-@media(min-width:800px){.top button{display:none}.side{transform:none}main{margin-left:270px;max-width:none;padding-right:28px}.tiles{grid-template-columns:repeat(3,1fr)}.grid2,.g3{grid-template-columns:1fr 1fr}.g3{display:grid;gap:12px}.scrim{display:none!important}}
-.top select{margin-left:auto;width:auto;padding:6px 8px;background:#16225a;color:#fff;border:1px solid #2b3877;border-radius:8px}
-.back{display:inline-flex;align-items:center;gap:6px;background:var(--panel);color:var(--purple);border:1.5px solid var(--purple);border-radius:10px;padding:8px 14px;font:inherit;font-weight:700;cursor:pointer;margin-bottom:14px}
-.avatar,.ph{overflow:hidden}.avatar img,.ph img{width:100%;height:100%;object-fit:cover}
-.ph{width:84px;height:84px;border-radius:50%;background:var(--purple);color:#fff;display:grid;place-items:center;font-size:2rem;font-weight:700;flex:none}
-.phrow{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
-.sm{width:auto;display:inline-block;padding:0 16px;line-height:44px;min-height:46px;margin:8px 8px 0 0;text-align:center}
-.fh{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden}
-.ir{display:flex;flex-direction:column;padding:10px 0;border-bottom:1px solid var(--line)}.ir b{font-size:.82rem;color:var(--muted)}
-.swb{width:26px;height:26px;border-radius:50%;border:2px solid var(--purple);margin-left:6px;cursor:pointer;vertical-align:middle}
-.tile.off{opacity:.65}
-.auth{position:fixed;inset:0;z-index:100;background:linear-gradient(160deg,#0b1437,#16225a 60%,#5b21b6);overflow:auto;display:none;padding:16px}
-body.locked .auth{display:block}body.locked .top,body.locked .side,body.locked main,body.locked .scrim{display:none!important}
-.authbox{max-width:420px;margin:16px auto;background:var(--panel);color:var(--text);border-radius:16px;padding:20px}
-.authtop{display:flex;align-items:center;justify-content:space-between}.authtop .brand{color:var(--navy)}.authtop select{width:auto;padding:6px 8px}
-.pw{position:relative;display:block}.pw input{padding-right:48px}.eye{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:0;padding:8px;cursor:pointer;color:var(--muted);line-height:0}
-.tabs{display:flex;gap:8px;margin:12px 0}.tab{flex:1;min-height:44px;border:2px solid var(--purple);background:transparent;color:var(--purple);border-radius:10px;font:inherit;font-weight:700;cursor:pointer}.tab.on{background:var(--purple);color:#fff}
+:root{--bg:#070d1f;--panel:#0d1630;--panel2:#111d3d;--line:#1f2f5c;--text:#e8eefc;--mute:#8da0c8;--blue:#2f7bff;--cyan:#27d3ff;--green:#22c97a;--amber:#f5b83d;--red:#ff5d6c;--r:14px}
+*{box-sizing:border-box;margin:0}
 [hidden]{display:none!important}
+body{font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:radial-gradient(1200px 600px at 70% -10%,#12307a55,transparent),var(--bg);color:var(--text);min-height:100vh}
+button{font:inherit;cursor:pointer;border:0;color:inherit}
+a{color:var(--cyan)}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+/* top bar */
+.top{display:flex;align-items:center;gap:18px;padding:12px 22px;border-bottom:1px solid var(--line);background:#09112800;position:sticky;top:0;z-index:20;backdrop-filter:blur(10px);background:#070d1fcc}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:20px}
+.logo svg{width:30px;height:30px}
+.tabs{display:flex;gap:6px;color:var(--mute);font-size:13px;flex:1;flex-wrap:wrap}
+.tabs span{padding:4px 10px;border-right:1px solid var(--line)}
+.tabs span:last-child{border:0}
+.badge{font-size:12px;border:1px solid var(--line);border-radius:20px;padding:5px 12px;color:var(--cyan)}
+.user{width:36px;height:36px;border-radius:50%;border:1.5px solid var(--mute);background:none;display:grid;place-items:center;font-weight:600}
+.user.in{background:var(--blue);border-color:var(--blue)}
+/* layout */
+.app{display:grid;grid-template-columns:210px 1fr;min-height:calc(100vh - 62px)}
+.side{border-right:1px solid var(--line);padding:18px 12px;display:flex;flex-direction:column;gap:4px}
+.side button{background:none;text-align:left;padding:11px 14px;border-radius:10px;color:var(--mute);display:flex;gap:10px;align-items:center}
+.side button.on,.side button:hover{background:#17306b;color:#fff}
+.side .foot{margin-top:auto;color:var(--mute);font-size:13px;padding:14px;line-height:1.4}
+main{padding:26px 28px 40px;min-width:0}
+.view{display:none}.view.on{display:block}
+h1{font-size:clamp(28px,4vw,40px);line-height:1.1;margin-bottom:8px}
+h1 b{color:var(--blue)}
+.sub{color:var(--mute);margin-bottom:22px;max-width:60ch}
+.grid2{display:grid;grid-template-columns:1.25fr 1fr;gap:20px}
+.card{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:var(--r);padding:20px}
+.drop{border:2px dashed #2c4a99;border-radius:var(--r);min-height:260px;display:grid;place-items:center;text-align:center;padding:24px;transition:.2s;background:#0a1330}
+.drop.over{border-color:var(--cyan);background:#0e2250}
+.drop svg{width:54px;height:54px;color:var(--cyan)}
+.drop h3{font-size:22px;margin:10px 0 4px}
+.drop p{color:var(--mute);font-size:13px;margin:3px 0}
+.btn{background:var(--blue);padding:11px 24px;border-radius:9px;font-weight:600;margin-top:12px;display:inline-flex;gap:8px;align-items:center}
+.btn:hover{background:#4a8dff}
+.btn.ghost{background:none;border:1px solid var(--line);color:var(--text)}
+.btn.sm{padding:7px 14px;font-size:13px;margin:0}
+.prev img,.prev video{max-width:100%;max-height:220px;border-radius:10px;display:block;margin:0 auto 8px}
+.pill{display:inline-block;font-size:11px;padding:3px 10px;border-radius:20px;background:#17306b;color:var(--cyan)}
+.res{border-radius:10px;padding:14px 16px;margin:12px 0;display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:18px}
+.res.ok{background:#0d3a2b;color:var(--green)}.res.warn{background:#3d1a22;color:var(--red)}.res.unk{background:#3a2f12;color:var(--amber)}.res.idle{background:#14214a;color:var(--mute)}
+.res small{font-weight:500;font-size:13px}
+.why{list-style:none;padding:0;display:grid;gap:7px;font-size:14px;margin:10px 0}
+.why li{display:flex;gap:8px}
+.why li::before{content:"✓";color:var(--green);font-weight:700}
+.note{font-size:12px;color:var(--mute);line-height:1.5;margin-top:10px}
+.prevcard{display:flex;gap:16px;align-items:center}
+.face{width:128px;height:150px;border-radius:10px;background:linear-gradient(160deg,#2a4a8a,#10204a);display:grid;place-items:center;flex:none}
+.face svg{width:80px;opacity:.85}
+.feats{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-top:22px}
+.feat{display:flex;gap:12px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px;cursor:pointer;text-align:left;transition:.2s}
+.feat:hover{border-color:var(--blue);transform:translateY(-2px)}
+.ic{width:46px;height:46px;border-radius:12px;display:grid;place-items:center;font-size:22px;flex:none;background:#1b3a86}
+.feat b{display:block;margin-bottom:3px}.feat span{font-size:12px;color:var(--mute);line-height:1.4}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:10px;border-bottom:1px solid var(--line)}
+th{color:var(--mute);font-weight:500}
+label{display:block;font-size:13px;color:var(--mute);margin:12px 0 5px}
+input,select{width:100%;background:#0a1330;border:1px solid var(--line);color:var(--text);padding:11px 12px;border-radius:9px;font:inherit}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.tips{display:grid;gap:10px;margin-top:14px}
+.tips div{background:#0a1330;border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:14px;line-height:1.5}
+/* modal */
+.modal{position:fixed;inset:0;background:#030612cc;display:none;place-items:center;z-index:50;padding:16px}
+.modal.on{display:grid}
+.box{width:100%;max-width:400px;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:26px}
+.seg{display:flex;background:#0a1330;border-radius:10px;padding:4px;margin:14px 0}
+.seg button{flex:1;padding:9px;border-radius:7px;background:none;color:var(--mute)}
+.seg button.on{background:var(--blue);color:#fff}
+.err{color:var(--red);font-size:13px;min-height:18px;margin-top:8px}
+body.locked .app,body.locked .top .user,body.locked .badge{display:none}
+.modal.full{background:radial-gradient(900px 500px at 50% 0,#12307a88,var(--bg))}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:18px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+.stat b{display:block;font-size:30px}.stat span{color:var(--mute);font-size:13px}
+.bar{height:12px;border-radius:8px;background:#0a1330;overflow:hidden;display:flex;margin:10px 0}.bar i{display:block;height:100%}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--mute)}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#17306b;padding:12px 18px;border-radius:10px;z-index:99;display:none;max-width:90%}
+.mini{padding:4px 9px;border-radius:6px;background:#17306b;font-size:12px;margin-right:4px}.mini.on{background:var(--blue)}
+.top select{width:auto;padding:6px 8px;font-size:13px}
+.pw{position:relative}.pw input{padding-right:44px}
+.eye{color:var(--mute);display:grid;place-items:center}.eye:hover{color:var(--text)}.eye .off{display:none}.eye.on .off{display:block}.eye.on .open{display:none}
+.eye{position:absolute;right:4px;top:50%;transform:translateY(-50%);background:none;padding:8px 10px;font-size:16px}
+.box{max-height:92vh;overflow:auto}.chk{display:flex;gap:10px;align-items:flex-start;color:var(--text);line-height:1.4}.chk input{width:auto;margin-top:3px}
+details{margin-top:14px}summary{cursor:pointer;color:var(--mute);font-size:13px}
+@media(max-width:860px){.app{grid-template-columns:1fr}.side{flex-direction:row;overflow-x:auto;border-right:0;border-bottom:1px solid var(--line);padding:8px}.side .foot{display:none}.grid2{grid-template-columns:1fr}.tabs{display:none}main{padding:18px 14px 30px}.top{padding:10px 14px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body class="locked">
-<div id="auth" class="auth"><div class="authbox">
-  <div class="authtop"><span class="brand">CareerMatch <span>AI</span></span><select id="lang2" aria-label="Language"><option value="en">English</option><option value="hi">हिन्दी</option><option value="mr">मराठी</option></select></div>
-  <h1 style="margin-top:14px">Welcome</h1>
-  <div class="tabs" role="tablist"><button type="button" id="tabL" class="tab on" role="tab" aria-selected="true">Log In</button><button type="button" id="tabR" class="tab" role="tab" aria-selected="false">Register</button></div>
-  <form id="alf" novalidate>
-    <label for="la_e">Email</label><input id="la_e" type="email" autocomplete="email">
-    <label for="la_p">Password</label><input id="la_p" type="password" autocomplete="current-password">
-    <p class="err" id="la_err" role="alert"></p>
-    <button class="btn" id="la_btn" type="submit">Log In</button>
-  </form>
-  <form id="arf" novalidate hidden>
-    <label for="ra_n">Full name</label><input id="ra_n" autocomplete="name" maxlength="80">
-    <label for="ra_e">Email</label><input id="ra_e" type="email" autocomplete="email">
-    <label for="ra_p">Password (8+ characters)</label><input id="ra_p" type="password" autocomplete="new-password">
-    <label for="ra_c">Confirm password</label><input id="ra_c" type="password" autocomplete="new-password">
-    <p class="err" id="ra_err" role="alert"></p>
-    <button class="btn" id="ra_btn" type="submit">Create Account</button>
-  </form>
-  <p class="note">Local demo account: saved only on this device. This is not secure login. Real accounts come with Supabase in Phase 2.</p>
-</div></div>
-<div class="top"><button id="menu" aria-label="Open menu" aria-expanded="false">&#9776;</button><span class="brand">CareerMatch <span>AI</span></span><select id="lang" aria-label="Language"><option value="en">English</option><option value="hi">हिन्दी</option><option value="mr">मराठी</option></select></div>
-<div class="scrim" id="scrim"></div>
-<aside class="side" id="side">
-  <div class="user"><div class="avatar" id="av">S</div><div><b id="uname">Student</b><small>Saved in this browser</small></div></div>
-  <a data-go="dash" class="on">Dashboard</a>
-  <a data-go="profile">My Profile</a>
-  <a data-go="matches">Career Matches</a>
-  <a data-go="resume">Resume Analyzer</a>
-  <a data-go="jobs">Jobs &amp; Internships</a>
-  <a data-go="gap">Skill Gap &amp; Roadmap</a>
-  <a data-go="explore">Career Explorer</a>
-  <h4>ACCOUNT</h4>
-  <a data-go="about">About &amp; Contact</a>
-  <a data-logout>Log out</a>
-  <h4>APPEARANCE</h4>
-  <div class="theme">Dark mode <input type="checkbox" id="dark" aria-label="Dark mode"></div>
-  <div class="theme">Background<span id="sw"></span></div>
-</aside>
-<main>
+<div class="toast" id="toast" role="status"></div>
+<header class="top">
+  <div class="logo"><svg viewBox="0 0 32 32" fill="none"><path d="M16 2l11 4v9c0 7-5 12-11 15C10 27 5 22 5 15V6z" stroke="#2f7bff" stroke-width="2"/><path d="M11 16l4 4 7-8" stroke="#27d3ff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>DeepfakeGuard</div>
+  <div class="tabs"><span>Responsible AI</span><span>Cyber Resilience</span><span>Digital Trust</span></div>
+  <span class="badge">🛡 Safe · Secure · Transparent</span>
+  <select id="langTop" aria-label="Language"><option value="en">English</option><option value="hi">हिंदी</option><option value="mr">मराठी</option></select>
+  <button class="user" id="userBtn" aria-label="Account" title="Login / Register">👤</button>
+</header>
 
-<section class="view on" id="v-dash">
-  <h1>Welcome to CareerMatch AI</h1>
-  <p class="sub">Your student career companion</p>
-  <p class="demo">PROTOTYPE: results use simple rules on your input. No AI model is connected yet.</p>
-  <div class="tiles">
-    <button class="tile t1" data-go="resume"><b>Resume Analyzer</b><span>Find skills in your resume text</span></button>
-    <button class="tile t2" data-go="profile"><b>Student Profile</b><span>Your information and photo</span></button>
-    <button class="tile t3" data-go="matches"><b>Career Matches</b><span>See careers that fit your profile</span></button>
-    <button class="tile t4" data-go="gap"><b>Skill Gap &amp; Roadmap</b><span>Compare skills and track steps</span></button>
-    <button class="tile t5" data-go="jobs"><b>Jobs &amp; Internships</b><span>Find real internships and jobs</span></button>
-    <button class="tile t6 off" aria-disabled="true" data-go="premium"><b>Premium</b><span>Coming soon</span></button>
-  </div>
-  <div class="grid2" style="margin-top:16px">
-    <section class="card">
-      <h2>Your Progress</h2>
-      <div class="mini"><div><b id="s1">0</b><span>Resumes checked</span></div><div><b id="s2">0</b><span>Job analyses</span></div><div><b id="s3">0</b><span>Roadmap steps done</span></div><div><b id="s4">0%</b><span>Profile complete</span></div></div>
-      <p class="sub" style="margin-top:14px">Profile completion</p><div class="bar"><i id="pbar" style="width:0%"></i></div>
-    </section>
-    <section class="card">
-      <h2>Job Analyzer</h2>
-      <form id="jf" novalidate>
-        <label for="jt">Job title</label><input id="jt" placeholder="e.g., Front-end Developer" maxlength="100">
-</style>
-</head>
-<body>
-<div class="top"><button id="menu" aria-label="Open menu" aria-expanded="false">&#9776;</button><span class="brand">CareerMatch <span>AI</span></span><select id="lang" aria-label="Language"><option value="en">English</option><option value="hi">हिन्दी</option><option value="mr">मराठी</option></select></div>
-<div class="scrim" id="scrim"></div>
-<aside class="side" id="side">
-  <div class="user"><div class="avatar" id="av">S</div><div><b id="uname">Student</b><small>Saved in this browser</small></div></div>
-  <a data-go="dash" class="on">Dashboard</a>
-  <a data-go="profile">My Profile</a>
-  <a data-go="matches">Career Matches</a>
-  <a data-go="resume">Resume Analyzer</a>
-  <a data-go="jobs">Jobs &amp; Internships</a>
-  <a data-go="gap">Skill Gap &amp; Roadmap</a>
-  <a data-go="explore">Career Explorer</a>
-  <h4>ACCOUNT</h4>
-  <a data-go="about">About &amp; Contact</a>
-  <a data-go="login">Login / Sign Up</a>
-  <h4>APPEARANCE</h4>
-  <div class="theme">Dark mode <input type="checkbox" id="dark" aria-label="Dark mode"></div>
-  <div class="theme">Background<span id="sw"></span></div>
-</aside>
-<main>
+<div class="app">
+<nav class="side" id="nav">
+  <button data-v="home" class="on">🏠 Home</button>
+  <button data-v="upload">⬆ Upload Media</button>
+  <button data-v="dashboard">📊 Dashboard</button>
+  <button data-v="history">🕘 History</button>
+  <button data-v="report">🚩 Report</button>
+  <button data-v="awareness">🛡 Awareness</button>
+  <button data-v="about">ⓘ About</button>
+  <button data-v="admin" id="navAdmin" hidden>🔐 Admin</button>
+  <button data-v="settings">⚙ Settings</button>
+  <div class="foot">Building a safer digital world together.</div>
+</nav>
 
-<section class="view on" id="v-dash">
-  <h1>Welcome to CareerMatch AI</h1>
-  <p class="sub">Your student career companion</p>
-  <p class="demo">PROTOTYPE: results use simple rules on your input. No AI model is connected yet.</p>
-  <div class="tiles">
-    <button class="tile t1" data-go="resume"><b>Resume Analyzer</b><span>Find skills in your resume text</span></button>
-    <button class="tile t2" data-go="profile"><b>Student Profile</b><span>Your information and photo</span></button>
-    <button class="tile t3" data-go="matches"><b>Career Matches</b><span>See careers that fit your profile</span></button>
-    <button class="tile t4" data-go="gap"><b>Skill Gap &amp; Roadmap</b><span>Compare skills and track steps</span></button>
-    <button class="tile t5" data-go="jobs"><b>Jobs &amp; Internships</b><span>Sample listings with skill match</span></button>
-    <button class="tile t6 off" aria-disabled="true" data-go="premium"><b>Premium</b><span>Coming soon</span></button>
+<main>
+<!-- HOME -->
+<section class="view on" id="v-home">
+  <h1 id="h1">Detect Deepfakes. <b>Build Trust.</b></h1>
+  <p class="sub">Upload an image or video and let our AI detect potential deepfakes with explainable results.</p>
+  <div class="grid2">
+    <div class="drop" id="homeDrop">
+      <div>
+        <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M18 44a12 12 0 01-1-24 16 16 0 0130-3 11 11 0 012 27"/><path d="M32 52V30M24 37l8-8 8 8"/></svg>
+        <h3>Drag &amp; Drop your file here</h3>
+        <p>or click to browse</p>
+        <p>Photos (JPG, PNG), videos (MP4, MOV) and audio (MP3, WAV) · Max 50MB</p>
+        <button class="btn" data-pick>📁 Choose File</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="row"><b>🔍 Detection Preview</b><span class="pill">Sample UI</span></div>
+      <div class="prevcard" style="margin-top:14px">
+        <div class="face"><svg viewBox="0 0 80 90" fill="#9fb8e8"><circle cx="40" cy="30" r="18"/><path d="M6 90c2-26 16-34 34-34s32 8 34 34z"/></svg></div>
+        <div style="flex:1">
+          <div class="res idle" style="margin-top:0">Awaiting analysis</div>
+          <p class="note" style="margin:0">Results appear after a real model runs. Scores here are never invented.</p>
+        </div>
+      </div>
+      <p style="margin-top:14px;font-size:14px"><b>Why?</b> You will see which signals were checked:</p>
+      <ul class="why"><li>Facial feature consistency</li><li>Lighting &amp; shadow patterns</li><li>Compression &amp; texture artifacts</li></ul>
+    </div>
   </div>
-  <div class="grid2" style="margin-top:16px">
-    <section class="card">
-      <h2>Your Progress</h2>
-      <div class="mini"><div><b id="s1">0</b><span>Resumes checked</span></div><div><b id="s2">0</b><span>Job analyses</span></div><div><b id="s3">0</b><span>Roadmap steps done</span></div><div><b id="s4">0%</b><span>Profile complete</span></div></div>
-      <p class="sub" style="margin-top:14px">Profile completion</p><div class="bar"><i id="pbar" style="width:0%"></i></div>
-    </section>
-    <section class="card">
+  <div class="feats" id="feats">
+    <button class="feat" data-v="upload"><div class="ic">🧠</div><div><b>AI Deepfake Detection</b><span>Advanced machine learning to detect manipulated media.</span></div></button>
+    <button class="feat" data-v="about"><div class="ic" style="background:#4b2f9a">🔎</div><div><b>Explainable Results</b><span>See why something is flagged with transparent reasoning.</span></div></button>
+    <button class="feat" data-v="about"><div class="ic" style="background:#157a52">🔒</div><div><b>Privacy First</b><span>Files are analysed in memory and not stored.</span></div></button>
+    <button class="feat" data-v="awareness"><div class="ic" style="background:#a8601a">🛡</div><div><b>Cyber Resilience</b><span>Tips against impersonation, scams and misinformation.</span></div></button>
+    <button class="feat" data-v="awareness"><div class="ic" style="background:#8a3a8f">🤝</div><div><b>Digital Trust</b><span>How to verify sources and metadata yourself.</span></div></button>
+  </div>
+</section>
+
+<!-- UPLOAD -->
+<section class="view" id="v-upload">
+  <h1>Upload <b>Media</b></h1>
+  <p class="sub">Choose a photo, video or audio file up to 50 MB. The AI model checks it and says Fake or Real. Videos are checked frame by frame.</p>
+  <div class="grid2">
+    <div>
+      <div class="drop" id="upDrop"><div>
+        <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M18 44a12 12 0 01-1-24 16 16 0 0130-3 11 11 0 012 27"/><path d="M32 52V30M24 37l8-8 8 8"/></svg>
+        <h3>Drag &amp; Drop your file here</h3><p>or click to browse</p>
+        <button class="btn" data-pick>📁 Choose File</button></div></div>
+      <input type="file" id="file" accept="image/*,video/mp4,video/quicktime,audio/*,.jpg,.jpeg,.png,.mp4,.mov,.mp3,.wav,.m4a,.ogg" hidden>
+    </div>
+    <div class="card">
+      <b>Analysis report</b>
+      <div class="prev" id="prev" style="margin-top:12px"></div>
+      <div id="fileInfo" class="note">No file selected.</div>
+      <div class="res idle" id="resBox">Awaiting analysis</div>
+      <div id="resMeta" class="note"></div>
+      <div id="truth" class="note" hidden>Help measure accuracy – the actual content is:
+        <button class="mini" data-t="fake">Fake</button><button class="mini" data-t="real">Real</button></div>
+      <button class="btn sm ghost" data-v="report" id="repLink" hidden style="margin-top:10px">🚩 How to report this content</button>
+      <div class="row" style="margin-top:12px">
+        <button class="btn sm" id="analyze" disabled>Analyze</button>
+        <button class="btn sm ghost" id="demoBtn">Demo mode</button>
+        <button class="btn sm ghost" id="dl" disabled>Download report</button>
+      </div>
+      <p class="note">AI results are not final proof. Always verify with the original source and a human reviewer.</p>
+    </div>
+  </div>
+</section>
+
+<!-- HISTORY -->
+<section class="view" id="v-history">
+  <h1>Analysis <b>History</b></h1>
+  <p class="sub">Stored in this browser, separately for each account. Mark results as Fake or Real to measure accuracy.</p>
+  <div class="card" style="overflow-x:auto">
+    <table><thead><tr><th>Date</th><th>File</th><th>Result</th><th>Risk</th><th>Actual</th></tr></thead><tbody id="histBody"></tbody></table>
+    <p class="note" id="histEmpty">No scans yet. Upload a file to begin.</p>
+    <button class="btn sm ghost" id="clearHist" style="margin-top:12px">Clear history</button>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="view" id="v-about">
+  <h1>About <b>DeepfakeGuard</b></h1>
+  <p class="sub">A hackathon project on Responsible AI, deepfake detection, cyber resilience and digital trust.</p>
+  <div class="card">
+    <b>How it works</b>
+    <div class="tips">
+      <div><b>1. Upload</b> – you pick a photo or video; type and size are validated.</div>
+      <div><b>2. Analyse</b> – a pre-trained deepfake model (e.g. via Hugging Face Transformers) runs on the file. Videos are sampled into frames.</div>
+      <div><b>3. Result</b> – one of three outcomes: <i>Potential manipulation detected</i>, <i>No obvious manipulation detected</i>, or <i>Inconclusive</i>.</div>
+      <div><b>4. Stay safe</b> – guidance on verifying the content and reporting it.</div>
+    </div>
+    <p class="note"><b>Responsible AI:</b> models can produce false positives and false negatives. A confidence score is not a guarantee, and "no manipulation detected" never proves content is real. Files are processed in memory and not kept.</p>
+  </div>
+</section>
+
+<!-- AWARENESS -->
+<section class="view" id="v-awareness">
+  <h1>Cyber <b>Awareness</b> Center</h1>
+  <p class="sub">Practical steps to verify content and avoid fraud.</p>
+  <div class="card"><b>Digital Trust Checker</b>
+    <div class="tips">
+      <div>🔗 <b>Trace the source:</b> find the original post or publisher. Reverse-image-search the picture.</div>
+      <div>🧾 <b>Check metadata:</b> date, device and location can help, but they are easy to edit or strip.</div>
+      <div>📰 <b>Cross-check:</b> look for the same story on official or established news channels.</div>
+      <div>📞 <b>Impersonation scams:</b> if a voice or video asks for money, hang up and call back on a known number.</div>
+      <div>🚩 <b>Report:</b> report to the platform, and in India to cybercrime.gov.in or helpline 1930.</div>
+    </div>
+  </div>
+<div class="card" style="margin-top:16px"><b>🔐 Cyber resilience: how this site protects you</b>
+    <div class="tips">
+      <div>Passwords are hashed on the server and never stored as plain text.</div>
+      <div>5 wrong passwords lock the account for 15 minutes. Login, OTP and scan requests are rate-limited.</div>
+      <div>Password-reset OTPs expire in 10 minutes, allow 5 tries and can be used once.</div>
+      <div>You are logged out after 15 minutes of inactivity.</div>
+      <div>Uploads are type- and size-checked and deleted from the server right after analysis.</div>
+      <div>Only adults (18+) can register. Never share your OTP or password with anyone.</div>
+    </div></div>
+</section>
+
+<section class="view" id="v-dashboard">
+  <h1>Accuracy &amp; Risk <b>Dashboard</b></h1>
+  <p class="sub">Every number is calculated from real scans on this browser. Nothing is invented.</p>
+  <div id="dashBody"></div>
+</section>
+<section class="view" id="v-report">
+  <h1>Report suspicious <b>content</b></h1>
+  <p class="sub">If a fake photo, video or voice targets you or someone you know, act in this order.</p>
+  <div class="card"><div class="tips">
+    <div>1. <b>Do not forward it.</b> Sharing spreads the harm.</div>
+    <div>2. <b>Save evidence:</b> screenshots, the link, username, date and time. Do not delete chats.</div>
+    <div>3. <b>Report on the platform</b> (Instagram, WhatsApp, YouTube, X) using “Report” → impersonation / fake media.</div>
+    <div>4. <b>India:</b> file a complaint at <a href="https://cybercrime.gov.in" target="_blank" rel="noopener">cybercrime.gov.in</a> or call <b>1930</b> for financial fraud.</div>
+    <div>5. <b>Intimate fake images:</b> use <a href="https://stopncii.org" target="_blank" rel="noopener">StopNCII.org</a> to block them from spreading.</div>
+    <div>6. <b>Tell someone you trust</b> and never pay or send OTPs to anyone who threatens you with a fake.</div>
+  </div></div>
+</section>
+<section class="view" id="v-admin">
+  <h1>Admin <b>Console</b></h1>
+  <p class="sub">Registered users, login activity and scans from your server. Passwords are never shown.</p>
+  <div class="row" style="margin-bottom:14px"><button class="btn sm" id="adminRefresh">Refresh</button>
+   <button class="btn sm ghost" data-csv="users">Export users</button><button class="btn sm ghost" data-csv="events">Export activity</button><button class="btn sm ghost" data-csv="scans">Export scans</button></div>
+  <div class="stats" id="adminStats"></div>
+  <div class="card" style="overflow-x:auto"><b>Registered users</b><table id="tUsers"></table></div>
+  <div class="card" style="overflow-x:auto;margin-top:16px"><b>Login &amp; register activity</b><table id="tEvents"></table></div>
+  <div class="card" style="overflow-x:auto;margin-top:16px"><b>Scans</b><table id="tScans"></table></div>
+</section>
+<!-- SETTINGS -->
+<section class="view" id="v-settings">
+  <h1><b>Settings</b></h1>
+  <p class="sub">Connect the website to your detection backend.</p>
+  <div class="card" style="max-width:560px">
+    <label for="api">Backend API URL (Flask /api/analyze)</label>
+    <input id="api" placeholder="http://127.0.0.1:5000">
+    <button class="btn sm" id="saveSet" style="margin-top:14px">Save settings</button> <button class="btn sm ghost" id="testApi" style="margin-top:14px">Test connection</button> <span class="note" id="apiMsg"></span>
+    <p class="note">Without a backend, real analysis is unavailable and the app returns “Inconclusive”. Demo mode only shows a labelled sample.</p>
+  </div>
+</section>
+</main>
+</div>
+
+<!-- AUTH -->
+<div class="modal" id="auth" role="dialog" aria-modal="true" aria-label="Account">
+ <div class="box">
+  <div class="row"><b style="font-size:18px">🛡 DeepfakeGuard <span class="pill">18+ only</span></b><button class="btn sm ghost" id="closeAuth" aria-label="Close" hidden>✕</button></div>
+  <div id="signedOut">
+   <div class="seg" id="seg"><button id="tLogin" class="on">Login</button><button id="tReg">Register</button></div>
+   <div id="pLogin">
+    <label for="lEmail">Email</label><input id="lEmail" type="email" autocomplete="email">
+    <label for="lPass">Password</label><div class="pw"><input id="lPass" type="password" autocomplete="current-password"><button type="button" class="eye" data-eye="lPass" aria-label="Show password"><svg class="open" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg><svg class="off" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/><path d="M3 3l18 18"/></svg></button></div>
+    <p class="note"><a href="#" id="toForgot">Forgot password?</a></p>
+    <button class="btn" id="lGo" style="width:100%;justify-content:center">Login</button>
+   </div>
+   <div id="pReg" hidden>
+    <label for="rName">Full name</label><input id="rName" autocomplete="name">
+    <label for="rEmail">Email</label><input id="rEmail" type="email" autocomplete="email">
+    <label for="rMobile">Mobile number</label><input id="rMobile" type="tel" inputmode="tel" placeholder="+91 98765 43210" autocomplete="tel">
+    <label for="rDob">Date of birth (18+ only)</label><input id="rDob" type="date">
+    <label for="rPass">Password</label><div class="pw"><input id="rPass" type="password" autocomplete="new-password"><button type="button" class="eye" data-eye="rPass" aria-label="Show password"><svg class="open" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg><svg class="off" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/><path d="M3 3l18 18"/></svg></button></div>
+    <div class="note" id="strength"></div>
+    <label for="rPass2">Confirm password</label><div class="pw"><input id="rPass2" type="password" autocomplete="new-password"><button type="button" class="eye" data-eye="rPass2" aria-label="Show password"><svg class="open" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg><svg class="off" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/><path d="M3 3l18 18"/></svg></button></div>
+    <label class="chk"><input type="checkbox" id="rConsent"><span>I am 18 or older. I agree that DeepfakeGuard stores my name, email, mobile number, date of birth and login activity for account security and admin review.</span></label>
+    <button class="btn" id="rGo" style="width:100%;justify-content:center;margin-top:14px">Create account</button>
+   </div>
+   <div id="pF1" hidden>
+    <p class="note">Enter your registered email. We will send a 6-digit OTP to it.</p>
+    <label for="fEmail">Registered email</label><input id="fEmail" type="email" autocomplete="email">
+    <button class="btn" id="f1Go" style="width:100%;justify-content:center">Send OTP</button>
+    <p class="note"><a href="#" class="back">Back to login</a></p>
+   </div>
+   <div id="pF2" hidden>
+    <p class="note">Enter the OTP sent to your email. It expires in 10 minutes.</p>
+    <label for="fOtp">OTP</label><input id="fOtp" inputmode="numeric" maxlength="6" autocomplete="one-time-code">
+    <button class="btn" id="f2Go" style="width:100%;justify-content:center">Verify OTP</button>
+    <p class="note"><a href="#" id="resend">Resend OTP</a> · <a href="#" class="back">Back to login</a></p>
+   </div>
+   <div id="pF3" hidden>
+    <label for="nPass">New password</label><div class="pw"><input id="nPass" type="password" autocomplete="new-password"><button type="button" class="eye" data-eye="nPass" aria-label="Show password"><svg class="open" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg><svg class="off" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/><path d="M3 3l18 18"/></svg></button></div>
+    <label for="nPass2">Confirm new password</label><div class="pw"><input id="nPass2" type="password" autocomplete="new-password"><button type="button" class="eye" data-eye="nPass2" aria-label="Show password"><svg class="open" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg><svg class="off" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/><path d="M3 3l18 18"/></svg></button></div>
+    <button class="btn" id="f3Go" style="width:100%;justify-content:center">Save new password</button>
+   </div>
+   <div class="err" id="aErr" role="alert"></div>
+   <details><summary>Server settings</summary>
+    <label for="apiAuth">Backend URL</label><input id="apiAuth" placeholder="https://your-backend.example.com">
+    <button class="btn sm ghost" id="saveApiAuth" style="margin-top:8px">Save &amp; test</button> <span class="note" id="apiStat"></span></details>
+  </div>
+  <div id="signedIn" hidden>
+   <p style="margin:16px 0">Signed in as <b id="who"></b></p>
+   <button class="btn ghost" id="logout">Log out</button>
+  </div>
+ </div>
+</div>
+
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const sess=()=>store.get('session',null);
+const DEFAULT_API='';/* put your deployed backend URL here before publishing */
+const MAX=50*1024*1024,EXT=['jpg','jpeg','png','mp4','mov','mp3','wav','m4a','ogg'],AUD=['mp3','wav','m4a','ogg'];
+let current=null,lastReport=null,mode='login';
+function toast(t){const e=$('#toast');e.textContent=t;e.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.display='none',2800)}
+
+/* language */
+const T={
+en:{home:'🏠 Home',upload:'⬆ Upload Media',dashboard:'📊 Dashboard',history:'🕘 History',report:'🚩 Report',awareness:'🛡 Awareness',about:'ⓘ About',settings:'⚙ Settings',h1:'Detect Deepfakes. <b>Build Trust.</b>',drop:'Drag &amp; Drop your file here',choose:'📁 Choose File'},
+hi:{home:'🏠 होम',upload:'⬆ मीडिया अपलोड',dashboard:'📊 डैशबोर्ड',history:'🕘 इतिहास',report:'🚩 रिपोर्ट',awareness:'🛡 जागरूकता',about:'ⓘ जानकारी',settings:'⚙ सेटिंग्स',h1:'डीपफेक पहचानें. <b>भरोसा बनाएं.</b>',drop:'अपनी फ़ाइल यहाँ खींचकर छोड़ें',choose:'📁 फ़ाइल चुनें'},
+mr:{home:'🏠 मुख्यपृष्ठ',upload:'⬆ मीडिया अपलोड',dashboard:'📊 डॅशबोर्ड',history:'🕘 इतिहास',report:'🚩 तक्रार',awareness:'🛡 जागरूकता',about:'ⓘ माहिती',settings:'⚙ सेटिंग्ज',h1:'डीपफेक ओळखा. <b>विश्वास वाढवा.</b>',drop:'तुमची फाइल येथे ड्रॅग करून सोडा',choose:'📁 फाइल निवडा'}};
+function setLang(l){const t=T[l]||T.en;store.set('lang',l);$('#langTop').value=l;
+ $$('#nav button').forEach(b=>b.textContent=t[b.dataset.v]||b.textContent);$('#h1').innerHTML=t.h1;
+ $$('.drop h3').forEach(h=>h.innerHTML=t.drop);$$('[data-pick]').forEach(b=>b.textContent=t.choose)}
+$('#langTop').addEventListener('change',e=>setLang(e.target.value));
+
+/* navigation (login required) */
+function go(v){
+  if(!sess())return openAuth();
+  $$('.view').forEach(e=>e.classList.toggle('on',e.id==='v-'+v));
+  $$('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+  if(v==='history')renderHist();if(v==='dashboard')renderDash();if(v==='admin')renderAdmin();scrollTo(0,0)}
+$$('[data-v]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.v)));
+
+/* upload */
+const fileIn=$('#file');
+$$('[data-pick]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();if(!sess())return openAuth();fileIn.click()}));
+fileIn.addEventListener('change',()=>{const f=fileIn.files&&fileIn.files[0];if(f)pick(f);fileIn.value=''});
+['homeDrop','upDrop'].forEach(id=>{const d=document.getElementById(id);
+ d.addEventListener('click',()=>{if(!sess())return openAuth();fileIn.click()});
+ ['dragenter','dragover'].forEach(ev=>d.addEventListener(ev,e=>{e.preventDefault();d.classList.add('over')}));
+ d.addEventListener('dragleave',()=>d.classList.remove('over'));
+ d.addEventListener('drop',e=>{e.preventDefault();d.classList.remove('over');const f=e.dataTransfer.files[0];if(f)pick(f)})});
+['dragover','drop'].forEach(ev=>window.addEventListener(ev,e=>e.preventDefault()));
+
+function setRes(cls,text,meta){const r=$('#resBox');r.className='res '+cls;r.textContent=text;$('#resMeta').textContent=meta||'';$('#truth').hidden=true;$('#repLink').hidden=true}
+function pick(f){
+  if(!sess())return openAuth();
+  go('upload');
+  const ext=(f.name.split('.').pop()||'').toLowerCase();
+  const badType=f.type&&!/^(image|video|audio)\//.test(f.type);
+  if(!EXT.includes(ext)||badType){current=null;$('#analyze').disabled=true;toast('Unsupported file. Use JPG, PNG, MP4, MOV, MP3 or WAV.');return setRes('unk','Unsupported file','Use JPG, PNG, MP4, MOV, MP3 or WAV.')}
+  if(f.size>MAX){current=null;$('#analyze').disabled=true;toast('File is larger than 50 MB.');return setRes('unk','File too large','Maximum size is 50 MB.')}
+  current=f;lastReport=null;$('#dl').disabled=true;$('#analyze').disabled=false;
+  const url=URL.createObjectURL(f),isV=['mp4','mov'].includes(ext),p=$('#prev');
+  p.innerHTML=AUD.includes(ext)?`<audio src="${url}" controls style="width:100%"></audio>`:isV?`<video src="${url}" controls muted playsinline></video>`:`<img src="${url}" alt="Uploaded preview">`;
+  $('#fileInfo').textContent=`${f.name} · ${(f.size/1048576).toFixed(2)} MB · validation passed`;
+  setRes('idle','Ready to analyze','Press Analyze to start.');toast('File uploaded. Press Analyze.')
+}
+
+/* analysis */
+$('#analyze').addEventListener('click',async()=>{
+  if(!current)return;
+  setRes('idle','Analyzing… this can take up to a minute','');$('#analyze').disabled=true;
+  try{
+    const fd=new FormData();fd.append('file',current);
+    const d=await call('/api/analyze',{method:'POST',form:fd});
+    const m={manipulated:['warn','Likely FAKE · manipulation detected'],clean:['ok','Likely REAL · no obvious manipulation']};
+    const st=m[d.status]?d.status:'inconclusive',[c,t]=m[st]||['unk','Inconclusive · cannot decide'];
+    finish(st,c,t,`${d.media||'file'} · model: ${d.model||'unknown'} · result: ${d.label||'n/a'}${d.score!=null?' · confidence '+(d.score*100).toFixed(1)+'%':''}. ${d.details||''} Not final proof; verify with the original source.`,d.model||'backend',d.score);
+  }catch(e){setRes('unk','Analysis failed',e.message)}
+  $('#analyze').disabled=false;
+});
+$('#demoBtn').addEventListener('click',()=>{
+  if(!sess())return openAuth();
+  if(!current)$('#fileInfo').textContent='sample-image.jpg (demo sample)';
+  finish('demo','idle','Demo sample – not a real result','Illustrative only. No model was run, so this is excluded from accuracy.','demo',null)
+});
+const hKey=e=>'hist_'+(e||(sess()||{}).email||'guest');
+const getH=e=>store.get(hKey(e),[]);
+function finish(status,cls,text,meta,source,score){
+  setRes(cls,text,meta);
+  lastReport={id:Date.now()+Math.random().toString(36).slice(2,6),file:current?current.name:'sample-image.jpg',status,result:text,note:meta,source,score,truth:null,date:new Date().toLocaleString()};
+  $('#dl').disabled=false;
+  store.set(hKey(),[lastReport,...getH()].slice(0,200));
+  $('#truth').hidden=!['manipulated','clean'].includes(status);
+  $$('#truth .mini').forEach(b=>b.classList.remove('on'));
+  $('#repLink').hidden=status!=='manipulated'
+}
+$$('#truth .mini').forEach(b=>b.addEventListener('click',()=>{if(lastReport)setTruth(lastReport.id,b.dataset.t);$$('#truth .mini').forEach(x=>x.classList.toggle('on',x===b))}));
+function setTruth(id,t){const h=getH();const x=h.find(r=>r.id===id);if(!x)return;x.truth=x.truth===t?null:t;store.set(hKey(),h);toast(x.truth?'Saved. Dashboard updated.':'Label removed.')}
+const RISK={manipulated:'High',inconclusive:'Needs review',clean:'Low',demo:'–'};
+$('#dl').addEventListener('click',()=>{
+  if(!lastReport)return;const L=lastReport;
+  const t=`DEEPFAKEGUARD ANALYSIS REPORT\nDate: ${L.date}\nFile: ${L.file}\nResult: ${L.result}\nRisk category: ${RISK[L.status]}\nModel/source: ${L.source}\nDetails: ${L.note}\n\nLimitations: AI output is not final proof and can be wrong (false positives and false negatives). Verify with original sources and human review.\n`;
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([t],{type:'text/plain'}));a.download='deepfakeguard-report.txt';a.click()
+});
+
+/* history + dashboard */
+function renderHist(){
+  const h=getH();
+  $('#histBody').innerHTML=h.map(x=>`<tr><td>${esc(x.date)}</td><td>${esc(x.file)}</td><td>${esc(x.result)}</td><td>${RISK[x.status]||'–'}</td><td>${['manipulated','clean'].includes(x.status)?['fake','real'].map(t=>`<button class="mini ${x.truth===t?'on':''}" data-id="${x.id}" data-t="${t}">${t[0].toUpperCase()+t.slice(1)}</button>`).join(''):'–'}</td></tr>`).join('');
+  $('#histEmpty').hidden=h.length>0}
+$('#histBody').addEventListener('click',e=>{const b=e.target.closest('[data-id]');if(b){setTruth(b.dataset.id,b.dataset.t);renderHist()}});
+$('#clearHist').addEventListener('click',()=>{if(confirm('Delete all your scan history?')){store.set(hKey(),[]);renderHist()}});
+function calc(h){
+  const r=h.filter(x=>x.status!=='demo'),c=s=>r.filter(x=>x.status===s).length;
+  const rev=r.filter(x=>x.truth&&['manipulated','clean'].includes(x.status));
+  const ok=rev.filter(x=>(x.status==='manipulated')===(x.truth==='fake')).length;
+  return{n:r.length,m:c('manipulated'),k:c('clean'),i:c('inconclusive'),rev:rev.length,ok,
+   fp:rev.filter(x=>x.status==='manipulated'&&x.truth==='real').length,fn:rev.filter(x=>x.status==='clean'&&x.truth==='fake').length}}
+const stat=(v,l)=>`<div class="stat"><b>${v}</b><span>${l}</span></div>`;
+function renderDash(){
+  const s=calc(getH()),pc=v=>s.n?(v/s.n*100):0;
+  let h=`<div class="stats">${stat(s.n,'Real scans')}${stat(s.m,'Potential manipulation')}${stat(s.k,'No obvious manipulation')}${stat(s.i,'Inconclusive')}</div>
+  <div class="card"><b>Risk distribution</b>
+   <div class="bar"><i style="width:${pc(s.m)}%;background:var(--red)"></i><i style="width:${pc(s.i)}%;background:var(--amber)"></i><i style="width:${pc(s.k)}%;background:var(--green)"></i></div>
+   <div class="legend"><span>🔴 High ${s.m}</span><span>🟡 Needs review ${s.i}</span><span>🟢 Low ${s.k}</span></div></div>
+  <div class="card" style="margin-top:16px"><b>Measured model accuracy</b>`;
+  if(s.rev){h+=`<div class="stats" style="margin-top:12px">${stat((s.ok/s.rev*100).toFixed(0)+'%','Accuracy on '+s.rev+' checked scans')}${stat(s.fp,'False positives (real flagged fake)')}${stat(s.fn,'False negatives (fake passed as real)')}</div>`}
+  else h+=`<p class="note">No accuracy yet. After a scan, mark the actual content as Fake or Real (here or in History). Accuracy is computed only from those checked scans, and inconclusive or demo scans are excluded.</p>`;
+  h+=`<p class="note">A small sample is not a reliable benchmark. Test on a larger labelled dataset before claiming accuracy.</p></div>`;
+  const me=sess();
+  if(false){
+    const us=store.get('users',{});
+    h+=`<div class="card" style="margin-top:16px;overflow-x:auto"><b>Admin · all users</b><table><thead><tr><th>Name</th><th>Email</th><th>Scans</th></tr></thead><tbody>${Object.keys(us).map(e=>`<tr><td>${esc(us[e].name)}</td><td>${esc(e)}</td><td>${getH(e).filter(x=>x.status!=='demo').length}</td></tr>`).join('')}</tbody></table></div>`}
+  $('#dashBody').innerHTML=h}
+
+/* settings */
+$('#api').value=store.get('api','')||DEFAULT_API;
+$('#saveSet').addEventListener('click',()=>{store.set('api',$('#api').value.trim());toast('Settings saved')});
+$('#testApi').addEventListener('click',async()=>{
+  const u=$('#api').value.trim().replace(/\/$/,'');const m=$('#apiMsg');
+  if(!u){m.textContent='Enter a URL first.';return}
+  m.textContent='Testing…';
+  try{const r=await fetch(u+'/api/health');m.textContent=r.ok?'✓ Backend is running':'Server answered '+r.status}
+  catch(e){m.textContent='✗ Cannot reach backend (is it running? CORS?)'}
+});
+
+/* api + admin */
+const base=()=>{let u=(store.get('api','')||DEFAULT_API).trim().replace(/\/+$/,'').replace(/\/api$/,'');
+  if(u&&!/^https?:\/\//i.test(u))u=(/^(localhost|127\.|192\.168\.)/.test(u)?'http://':'https://')+u;return u};
+async function call(path,{method='GET',body,form,auth=true}={}){
+  const h={},t=store.get('token','');if(auth&&t)h.Authorization='Bearer '+t;
+  let b;if(form)b=form;else if(body){h['Content-Type']='application/json';b=JSON.stringify(body)}
+  if(!base())throw new Error('Backend URL is not set. Open "Server settings" and add it.');
+  let r;try{r=await fetch(base()+path,{method,headers:h,body:b})}catch(e){throw new Error('Cannot reach the server. Check the backend URL and that it is running.')}
+  const raw=await r.text();let d={};try{d=JSON.parse(raw)}catch(e){}
+  if(r.status===401&&auth&&t){logout();throw new Error('Session expired. Please log in again.')}
+  if(!r.ok)throw new Error(d.error||('Server replied HTTP '+r.status+(raw?': '+raw.replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim().slice(0,120):'')+'. Check that the backend URL points to the DeepfakeGuard backend.'));return d}
+const tbl=(el,cols,rows)=>{$(el).innerHTML='<thead><tr>'+cols.map(c=>`<th>${c[0]}</th>`).join('')+'</tr></thead><tbody>'+(rows.length?rows.map(r=>'<tr>'+cols.map(c=>`<td>${esc(r[c[1]]??'')}</td>`).join('')+'</tr>').join(''):`<tr><td colspan="${cols.length}">No data yet.</td></tr>`)+'</tbody>'};
+async function renderAdmin(){
+  try{
+    const [u,e,sc]=await Promise.all(['users','events','scans'].map(t=>call('/api/admin/'+t)));
+    $('#adminStats').innerHTML=stat(u.rows.length,'Registered users')+stat(e.rows.filter(x=>x.kind==='login').length,'Logins')+stat(e.rows.filter(x=>x.kind==='login_failed').length,'Failed logins')+stat(sc.rows.length,'Scans');
+    tbl('#tUsers',[['Name','name'],['Email','email'],['Mobile','mobile'],['DOB','dob'],['Registered','created'],['Last login','last_login'],['Logins','logins']],u.rows);
+    tbl('#tEvents',[['Time (UTC)','at'],['Email','email'],['Event','kind'],['IP','ip']],e.rows);
+    tbl('#tScans',[['Time (UTC)','at'],['Email','email'],['File','file'],['Type','media'],['Result','status'],['Model','model']],sc.rows)
+  }catch(x){toast(x.message)}}
+$('#adminRefresh').addEventListener('click',renderAdmin);
+$$('[data-csv]').forEach(b=>b.addEventListener('click',async()=>{
+  try{const r=await fetch(base()+'/api/admin/'+b.dataset.csv+'.csv',{headers:{Authorization:'Bearer '+store.get('token','')}});
+   if(!r.ok)throw new Error('Export failed');const a=document.createElement('a');a.href=URL.createObjectURL(await r.blob());a.download=b.dataset.csv+'.csv';a.click()}catch(e){toast(e.message)}}));
+
+/* auth */
+const PANELS=['pLogin','pReg','pF1','pF2','pF3'],GO={pLogin:'lGo',pReg:'rGo',pF1:'f1Go',pF2:'f2Go',pF3:'f3Go'};
+let resetTok='';
+function showP(id){PANELS.forEach(x=>$('#'+x).hidden=x!==id);$('#seg').hidden=!['pLogin','pReg'].includes(id);$('#tLogin').classList.toggle('on',id==='pLogin');$('#tReg').classList.toggle('on',id==='pReg');$('#aErr').textContent=''}
+const E=m=>{$('#aErr').textContent=m;return false};
+function age(d){const b=new Date(d),t=new Date();let a=t.getFullYear()-b.getFullYear();const m=t.getMonth()-b.getMonth();if(m<0||(m===0&&t.getDate()<b.getDate()))a--;return a}
+const pwOk=p=>p.length>=8&&/[A-Za-z]/.test(p)&&/\d/.test(p);
+const mx=new Date();mx.setFullYear(mx.getFullYear()-18);$('#rDob').max=mx.toISOString().slice(0,10);
+function openAuth(){$('#auth').classList.add('on');paintAuth();$('#apiAuth').value=store.get('api','')||DEFAULT_API;checkApi()}
+async function checkApi(){const m=$('#apiStat');if(!base()){m.textContent='No server set.';return}
+  try{const r=await fetch(base()+'/api/health');m.textContent=r.ok?'✓ Server connected':'✗ Server error '+r.status}catch(e){m.textContent='✗ Cannot reach server'}}
+$('#saveApiAuth').addEventListener('click',()=>{store.set('api',$('#apiAuth').value.trim());$('#api').value=$('#apiAuth').value.trim();checkApi()});
+function paintAuth(){
+  const s=sess();document.body.classList.toggle('locked',!s);$('#auth').classList.toggle('full',!s);
+  $('#signedOut').hidden=!!s;$('#signedIn').hidden=!s;$('#closeAuth').hidden=!s;$('#navAdmin').hidden=!(s&&s.admin);
+  $('#userBtn').classList.toggle('in',!!s);$('#userBtn').textContent=s?s.name.charAt(0).toUpperCase():'👤';
+  if(s)$('#who').textContent=s.name+' ('+s.email+')'+(s.admin?' · Admin':'')}
+$('#userBtn').addEventListener('click',openAuth);
+$('#closeAuth').addEventListener('click',()=>{if(sess())$('#auth').classList.remove('on')});
+$('#auth').addEventListener('click',e=>{if(e.target.id==='auth'&&sess())$('#auth').classList.remove('on')});
+$('#tLogin').onclick=()=>showP('pLogin');$('#tReg').onclick=()=>showP('pReg');
+$('#toForgot').onclick=e=>{e.preventDefault();$('#fEmail').value=$('#lEmail').value;showP('pF1')};
+$$('.back').forEach(a=>a.onclick=e=>{e.preventDefault();showP('pLogin')});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-eye]');if(!b)return;const i=$('#'+b.dataset.eye),show=i.type==='password';i.type=show?'text':'password';b.classList.toggle('on',show);b.setAttribute('aria-label',show?'Hide password':'Show password')});
+$('#rPass').addEventListener('input',e=>{const p=e.target.value;let n=(p.length>=8)+/[a-z]/.test(p)+/[A-Z]/.test(p)+/\d/.test(p)+/[^A-Za-z0-9]/.test(p);$('#strength').textContent=p?['Very weak','Weak','Fair','Good','Strong','Very strong'][n]+' · use 8+ characters with letters and numbers':''});
+async function onAuth(d){store.set('token',d.token);store.set('session',d.user);$('#auth').classList.remove('on');['lPass','rPass','rPass2'].forEach(i=>$('#'+i).value='');paintAuth();go('home');bump();toast('Welcome, '+d.user.name)}
+function busy(id,on,txt){const b=$('#'+id);b.disabled=on;if(txt)b.dataset.t=b.dataset.t||b.textContent,b.textContent=on?'Please wait…':b.dataset.t}
+$('#lGo').addEventListener('click',async()=>{
+  const email=$('#lEmail').value.trim().toLowerCase(),password=$('#lPass').value;
+  if(!/^\S+@\S+\.\S+$/.test(email))return E('Enter a valid email address.');if(!password)return E('Enter your password.');
+  busy('lGo',true,1);try{await onAuth(await call('/api/login',{method:'POST',body:{email,password},auth:false}))}catch(e){E(e.message)}busy('lGo',false,1)});
+$('#rGo').addEventListener('click',async()=>{
+  const v=i=>$('#'+i).value.trim(),name=v('rName'),email=v('rEmail').toLowerCase(),mobile=v('rMobile').replace(/[\s\-().]/g,''),dob=$('#rDob').value,password=$('#rPass').value;
+  if(name.length<2)return E('Enter your full name.');if(!/^\S+@\S+\.\S+$/.test(email))return E('Enter a valid email address.');
+  if(!/^\+?\d{10,15}$/.test(mobile))return E('Enter a valid mobile number (10 to 15 digits).');
+  if(!dob)return E('Date of birth is required.');if(age(dob)<18)return E('You must be 18 or older to register.');
+  if(!pwOk(password))return E('Password needs 8+ characters with letters and numbers.');
+  if(password!==$('#rPass2').value)return E('Passwords do not match.');
+  if(!$('#rConsent').checked)return E('Please accept the 18+ and data consent.');
+  busy('rGo',true,1);try{await onAuth(await call('/api/register',{method:'POST',body:{name,email,mobile,dob,password,consent:true},auth:false}))}catch(e){E(e.message)}busy('rGo',false,1)});
+async function sendOtp(){
+  const email=$('#fEmail').value.trim().toLowerCase();if(!/^\S+@\S+\.\S+$/.test(email))return E('Enter your registered email.');
+  busy('f1Go',true,1);try{await call('/api/forgot',{method:'POST',body:{email},auth:false});showP('pF2');toast('If this email is registered, an OTP has been sent.')}catch(e){E(e.message)}busy('f1Go',false,1)}
+$('#f1Go').addEventListener('click',sendOtp);$('#resend').onclick=e=>{e.preventDefault();sendOtp()};
+$('#f2Go').addEventListener('click',async()=>{
+  const otp=$('#fOtp').value.trim();if(!/^\d{6}$/.test(otp))return E('Enter the 6-digit OTP.');
+  busy('f2Go',true,1);try{const d=await call('/api/verify-otp',{method:'POST',body:{email:$('#fEmail').value.trim().toLowerCase(),otp},auth:false});resetTok=d.token;showP('pF3')}catch(e){E(e.message)}busy('f2Go',false,1)});
+$('#f3Go').addEventListener('click',async()=>{
+  const p=$('#nPass').value;if(!pwOk(p))return E('Password needs 8+ characters with letters and numbers.');
+  if(p!==$('#nPass2').value)return E('Passwords do not match.');
+  busy('f3Go',true,1);try{await call('/api/reset',{method:'POST',body:{token:resetTok,new_password:p},auth:false});resetTok='';$('#lEmail').value=$('#fEmail').value;['nPass','nPass2','fOtp'].forEach(i=>$('#'+i).value='');showP('pLogin');toast('Password changed. Please log in.')}catch(e){E(e.message)}busy('f3Go',false,1)});
+$('#auth').addEventListener('keydown',e=>{if(e.key!=='Enter'||$('#signedOut').hidden)return;const p=PANELS.find(x=>!$('#'+x).hidden);if(p)$('#'+GO[p]).click()});
+function logout(){store.set('session',null);store.set('token','');current=null;lastReport=null;clearTimeout(idle);paintAuth();showP('pLogin');openAuth()}
+$('#logout').addEventListener('click',logout);
+let idle;function bump(){clearTimeout(idle);if(sess())idle=setTimeout(()=>{toast('Logged out after 15 minutes of inactivity.');logout()},15*60*1000)}
+['click','keydown','touchstart'].forEach(ev=>addEventListener(ev,bump,{passive:true}));
+
+setLang(store.get('lang','en'));paintAuth();if(!sess())openAuth();else{bump();call('/api/me').then(d=>{store.set('session',d.user);paintAuth()}).catch(()=>{})}
+</script>
+</body>
+</html>

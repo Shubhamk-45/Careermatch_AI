@@ -1,13 +1,9 @@
-# CareerMatch AI (prototype)
+# DeepfakeGuard backend
 
-A student career guidance website. Frontend only for now: HTML, CSS and JavaScript in one file (`index.html`).
+1. `pip install -r requirements.txt` (also install **ffmpeg** for audio files)
+2. Copy `.env.example` values into your environment (SECRET_KEY, ADMIN_EMAILS, SMTP_*, ALLOWED_ORIGIN)
+3. `python app.py` (local) or `gunicorn app:app` (hosting)
+4. Put the backend URL in `index.html` (`DEFAULT_API`) or in "Server settings" on the login screen
 
-- Languages: English, Hindi, Marathi
-- Results are rule-based, not from an AI model
-- Jobs page opens real listings on Google Jobs, LinkedIn and Indeed (no fake listings)
-- Login is a local demo only, not secure
-- Premium is closed (coming soon)
-- Login and contact forms are not connected to a server yet
-
-
-Live site: https://Careermatch_AI.github.io/careermatch-ai/
+Without SMTP_HOST the OTP is printed in the server console (development only).
+Admins are the emails listed in ADMIN_EMAILS; they see the Admin tab.
